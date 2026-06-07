@@ -1,31 +1,36 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
-import { GoogleGenAI } from "@google/genai";
+import { Groq } from "groq-sdk";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-// Lazy initialize official Gemini AI client
-let aiInstance: GoogleGenAI | null = null;
-function getAI() {
-  const apiKey = process.env.GEMINI_API_KEY || "";
+// Lazy initialize Groq client
+let groqInstance: Groq | null = null;
+function getGroq() {
+  const apiKey = process.env.GROQ_API_KEY || "";
   if (!apiKey) {
-    throw new Error("La clave GEMINI_API_KEY no está configurada en los Secretos/Variables de Entorno.");
+    throw new Error("La clave GROQ_API_KEY no está configurada en los Secretos/Variables de Entorno o archivo .env.");
   }
-  if (!aiInstance) {
-    aiInstance = new GoogleGenAI({
+  if (!groqInstance) {
+    groqInstance = new Groq({
       apiKey: apiKey,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        }
-      }
     });
   }
-  return aiInstance;
+  return groqInstance;
+}
+
+// Robust parsing of JSON returned by the LLM
+function parseLLMResponse(text: string) {
+  let cleaned = text.trim();
+  // Strip markdown formatting if it wrapped the JSON
+  if (cleaned.startsWith("```")) {
+    cleaned = cleaned.replace(/^```(json)?\s*/i, "").replace(/\s*```$/, "");
+  }
+  return JSON.parse(cleaned);
 }
 
 // API Route: Custom Esoteric Decoding
@@ -36,7 +41,7 @@ app.post("/api/decode", async (req, res) => {
       return res.status(400).json({ error: "Símbolo o término requerido." });
     }
 
-    const ai = getAI();
+    const groq = getGroq();
     const prompt = `Actúa como un Gran Maestro Hermético experto en Cábala (Árbol de la Vida, Sefirot y Qlifot), Tarot, Alquimia Operativa, Astrología Caldea, Gnosticismo y Magia Ceremonial de órdenes de misterios como la Golden Dawn o los Rosacruces.
     
     Analiza y decodifica el siguiente término o símbolo: "${term}" ${context ? `dentro del contexto o pregunta expresados: "${context}"` : ""}.
@@ -52,16 +57,16 @@ app.post("/api/decode", async (req, res) => {
 
     IMPORTANTE: Responde ÚNICAMENTE con el objeto JSON estructurado con el formato exacto requerido, sin rodeos, sin bloques de código con markdown o texto explicativo fuera del JSON, para que pueda ser parseado directamente de manera robusta en JavaScript.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      }
+    const response = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
+      messages: [
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" }
     });
 
-    const text = response.text || "{}";
-    res.json(JSON.parse(text));
+    const text = response.choices[0]?.message?.content || "{}";
+    res.json(parseLLMResponse(text));
   } catch (error: any) {
     console.error("Error en /api/decode:", error);
     res.status(500).json({ error: error.message || "Error al decodificar el término invocando a la fuerza hermética." });
@@ -76,7 +81,7 @@ app.post("/api/analyze-movie", async (req, res) => {
       return res.status(400).json({ error: "Nombre de película o serie requerido." });
     }
 
-    const ai = getAI();
+    const groq = getGroq();
     const prompt = `Actúa como un erudito e historiador de Cine Hermético, Simbología Comparada y Gnosticismo.
     
     Analiza la siguiente obra cinematográfica: "${movie}".
@@ -92,16 +97,16 @@ app.post("/api/analyze-movie", async (req, res) => {
 
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin encapsular en bloques markdown, listo para ser consumido directamente.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      }
+    const response = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
+      messages: [
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" }
     });
 
-    const text = response.text || "{}";
-    res.json(JSON.parse(text));
+    const text = response.choices[0]?.message?.content || "{}";
+    res.json(parseLLMResponse(text));
   } catch (error: any) {
     console.error("Error en /api/analyze-movie:", error);
     res.status(500).json({ error: error.message || "Error al realizar el análisis cinematográfico hermético." });
@@ -116,7 +121,7 @@ app.post("/api/analyze-book", async (req, res) => {
       return res.status(400).json({ error: "Nombre del libro o texto sagrado requerido." });
     }
 
-    const ai = getAI();
+    const groq = getGroq();
     const prompt = `Actúa como un erudito e historiador de Literatura Esotérica, Simbología Comparada, Alta Magia y Gnosticismo.
     
     Analiza la siguiente obra literaria o texto sagrado: "${book}".
@@ -132,16 +137,16 @@ app.post("/api/analyze-book", async (req, res) => {
 
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin encapsular en bloques markdown, listo para ser consumido directamente.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      }
+    const response = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
+      messages: [
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" }
     });
 
-    const text = response.text || "{}";
-    res.json(JSON.parse(text));
+    const text = response.choices[0]?.message?.content || "{}";
+    res.json(parseLLMResponse(text));
   } catch (error: any) {
     console.error("Error en /api/analyze-book:", error);
     res.status(500).json({ error: error.message || "Error al decodificar los misterios literarios." });
@@ -156,10 +161,10 @@ app.post("/api/generate-pathworking", async (req, res) => {
       return res.status(400).json({ error: "Foco místico (arcano, sefirá, o constelación) requerido." });
     }
 
-    const ai = getAI();
+    const groq = getGroq();
     const prompt = `Diseña un Pathworking (Visualización Astral Guiada y Meditación Activa de la Imaginación) altamente inmersivo basado en: "${title}" (tipo de enfoque místico: "${focusType}").
     
-    El tono tiene que ser profundamente solemne, poético y místico. Guía al buscador espiritual a través de un viaje astral enriquecedor y seguro por la dimensión espiritual asociada a este concepto.
+    El tono tiene que ser profundamente solemne, poético y místico. Guía al buscador espiritual a través de un viaje astral enriquecedor y seguro por la dimensión espiritual asociada a este concept.
     
     Proporciona un desglose estructurado en JSON estricto con las siguientes claves:
     - "preparacion": Instrucciones físicas, respiratorias y espaciales recomendadas para sentarse en la vigilia astral (respiración rítmica pranayama, mudras protectores, sintonía aromática con inciensos o aceites, colores de velas rituales). (Sé breve y conciso).
@@ -171,16 +176,16 @@ app.post("/api/generate-pathworking", async (req, res) => {
 
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin preámbulos, delimitadores de código markdown ni discursos introductorios.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      }
+    const response = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
+      messages: [
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" }
     });
 
-    const text = response.text || "{}";
-    res.json(JSON.parse(text));
+    const text = response.choices[0]?.message?.content || "{}";
+    res.json(parseLLMResponse(text));
   } catch (error: any) {
     console.error("Error en /api/generate-pathworking:", error);
     res.status(500).json({ error: error.message || "Error al forjar tu sendero astral guiado." });
