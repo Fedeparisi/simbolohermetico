@@ -14,6 +14,7 @@ import {
   Layers,
   Activity,
   ChevronRight,
+  ChevronDown,
   Info,
   Play,
   Pause,
@@ -264,6 +265,7 @@ export default function App() {
 // ==========================================
 function LibraryView() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeSymbol, setActiveSymbol] = useState<EsotericSymbol | null>(SYMBOLS_DATABASE[0]);
   const [depth, setDepth] = useState<"beginner" | "intermediate" | "advanced">("beginner");
@@ -338,40 +340,68 @@ function LibraryView() {
           )}
         </div>
 
-        {/* Categories Carousel */}
-        <div className="flex flex-row overflow-x-auto gap-1.5 pb-2 scrollbar-none border-b border-amber-500/5">
+        {/* Categories Dropdown / Accordion */}
+        <div className="relative z-20">
           <button
-            onClick={() => setSelectedCategory("all")}
-            className={`px-3 py-1.5 rounded-md text-xs whitespace-nowrap border transition-all ${
-              selectedCategory === "all"
-                ? "bg-amber-500/20 border-amber-500/40 text-amber-300"
-                : "bg-zinc-900/50 border-transparent text-zinc-400 hover:text-amber-200"
-            }`}
+            onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
+            className="w-full flex items-center justify-between px-4 py-2.5 bg-zinc-900/80 border border-amber-500/20 text-amber-300 rounded-lg text-xs font-semibold hover:bg-zinc-900 transition-all shadow-md shadow-amber-500/5"
           >
-            🌌 Todos
+            <div className="flex items-center gap-2">
+              <span>{selectedCategory === "all" ? "🌌" : CATEGORIES.find(c => c.id === selectedCategory)?.emoji}</span>
+              <span>{selectedCategory === "all" ? "Todas las Categorías" : CATEGORIES.find(c => c.id === selectedCategory)?.name}</span>
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform ${isCategoryMenuOpen ? "rotate-180" : ""}`} />
           </button>
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => {
-                setSelectedCategory(cat.id);
-                // Select first in list automatically if found
-                const firstOpt = SYMBOLS_DATABASE.find(s => s.category === cat.id);
-                if (firstOpt) {
-                  setActiveSymbol(firstOpt);
-                  setAiResult(null);
-                }
-              }}
-              className={`px-3 py-1.5 rounded-md text-[11px] whitespace-nowrap border transition-all flex items-center gap-1.5 ${
-                selectedCategory === cat.id
-                  ? "bg-amber-500/25 border-amber-500/50 text-amber-200"
-                  : "bg-zinc-900/50 border-transparent text-zinc-400 hover:text-amber-200"
-              }`}
-            >
-              <span>{cat.emoji}</span>
-              <span>{cat.name}</span>
-            </button>
-          ))}
+
+          <AnimatePresence>
+            {isCategoryMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.15 }}
+                className="absolute top-full left-0 right-0 mt-1.5 bg-zinc-950 border border-amber-500/30 rounded-lg shadow-xl shadow-black/50 flex flex-col max-h-64 overflow-y-auto overflow-x-hidden z-30"
+              >
+                <button
+                  onClick={() => {
+                    setSelectedCategory("all");
+                    setIsCategoryMenuOpen(false);
+                  }}
+                  className={`px-4 py-2.5 text-left text-xs transition-all flex items-center gap-2 ${
+                    selectedCategory === "all"
+                      ? "bg-amber-500/20 text-amber-300 border-l-2 border-amber-500"
+                      : "text-zinc-400 hover:bg-zinc-900 hover:text-amber-200 border-l-2 border-transparent"
+                  }`}
+                >
+                  <span>🌌</span>
+                  <span>Todas las Categorías</span>
+                </button>
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setSelectedCategory(cat.id);
+                      setIsCategoryMenuOpen(false);
+                      // Select first in list automatically if found
+                      const firstOpt = SYMBOLS_DATABASE.find(s => s.category === cat.id);
+                      if (firstOpt) {
+                        setActiveSymbol(firstOpt);
+                        setAiResult(null);
+                      }
+                    }}
+                    className={`px-4 py-2.5 text-left text-xs transition-all flex items-center gap-2 ${
+                      selectedCategory === cat.id
+                        ? "bg-amber-500/20 text-amber-300 border-l-2 border-amber-500"
+                        : "text-zinc-400 hover:bg-zinc-900 hover:text-amber-200 border-l-2 border-transparent"
+                    }`}
+                  >
+                    <span>{cat.emoji}</span>
+                    <span>{cat.name}</span>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Symbols List */}
