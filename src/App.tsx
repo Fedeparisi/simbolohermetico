@@ -421,7 +421,7 @@ function LibraryView() {
             
             {/* The main visual archetype card */}
             <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/25 shadow-xl flex flex-col gap-5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full filter blur-xl" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full filter blur-xl pointer-events-none" />
               
               {/* Card Header */}
               <div className="flex justify-between items-start border-b border-amber-500/10 pb-4">
@@ -1458,7 +1458,7 @@ function PathworkingView() {
             
             {/* Pulsing Breathing Aura circle */}
             <div
-              className={`absolute w-36 h-36 rounded-full bg-amber-500/5 filter blur-xl transition-transform duration-4000 ${
+              className={`absolute w-36 h-36 rounded-full bg-amber-500/5 filter blur-xl transition-transform duration-4000 pointer-events-none ${
                 isBreathingActive && breathPhase === "inhale" ? "scale-150 bg-amber-500/10" : "scale-100"
               }`}
             />
