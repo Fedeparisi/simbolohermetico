@@ -108,6 +108,46 @@ app.post("/api/analyze-movie", async (req, res) => {
   }
 });
 
+// API Route: Esoteric Book analysis
+app.post("/api/analyze-book", async (req, res) => {
+  try {
+    const { book } = req.body;
+    if (!book) {
+      return res.status(400).json({ error: "Nombre del libro o texto sagrado requerido." });
+    }
+
+    const ai = getAI();
+    const prompt = `Actúa como un erudito e historiador de Literatura Esotérica, Simbología Comparada, Alta Magia y Gnosticismo.
+    
+    Analiza la siguiente obra literaria o texto sagrado: "${book}".
+    
+    Analízalo desde una perspectiva iniciática y esotérica de forma concisa y rápida. Desglosa los misterios que revela, su aporte a la Gran Obra Alquímica, sus arquetipos y detalles cabalísticos.
+    
+    Proporciona un desglose estructurado en JSON estricto con las siguientes claves:
+    - "sinopsis_esoterica": Una síntesis del libro interpretando su mensaje central desde el viaje de iniciación espiritual o trascendencia gnóstica. (Máximo 3 frases cortas).
+    - "arquetipos": Un arreglo o lista de los conceptos principales o figuras arquetípicas del texto (ej: el mago, la emanación divina, el buscador, el logos). (Limítate a los 2 o 3 arquetipos principales).
+    - "simbolos_ocultos": Una lista de 3 símbolos, alegorías o misterios (colores, números, esferas, sellos) que enseña la obra con un significado hermético directo y qué significa cada uno en una frase muy breve.
+    - "fases_transmutacion": Explicación de cómo las enseñanzas del libro guían a través de la Alquimia Espiritual (Nigredo - fragmentación y crisis; Albedo - el despertar de la sabiduría; Rubedo - la integración soberana). (Una frase muy corta por cada fase).
+    - "conclusion_gnostica": Un mensaje final resumiendo la enseñanza espiritual iniciática profunda que el libro transmite a los adeptos. (Máximo 2 frases).
+
+    Responde ÚNICAMENTE con el objeto JSON estructurado, sin encapsular en bloques markdown, listo para ser consumido directamente.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    const text = response.text || "{}";
+    res.json(JSON.parse(text));
+  } catch (error: any) {
+    console.error("Error en /api/analyze-book:", error);
+    res.status(500).json({ error: error.message || "Error al decodificar los misterios literarios." });
+  }
+});
+
 // API Route: Guided Pathworkings
 app.post("/api/generate-pathworking", async (req, res) => {
   try {

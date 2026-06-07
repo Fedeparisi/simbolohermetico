@@ -124,7 +124,7 @@ class CelestialSynth {
 const synthInstance = new CelestialSynth();
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<"library" | "oracle" | "cinema" | "pathworking">("library");
+  const [activeTab, setActiveTab] = useState<"library" | "oracle" | "cinema" | "books" | "pathworking">("library");
 
   // General App states
   const [isAudioMuted, setIsAudioMuted] = useState(false);
@@ -226,6 +226,18 @@ export default function App() {
           </button>
 
           <button
+            onClick={() => handleTabChange("books")}
+            className={`py-3 px-4 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all flex items-center justify-center gap-2.5 ${
+              activeTab === "books"
+                ? "bg-gradient-to-b from-amber-500/20 to-amber-500/5 border border-amber-500/30 text-amber-400 shadow-sm"
+                : "text-zinc-400 hover:text-amber-100/90 hover:bg-zinc-900/40"
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Libros Iniciáticos</span>
+          </button>
+
+          <button
             onClick={() => handleTabChange("pathworking")}
             className={`py-3 px-4 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all flex items-center justify-center gap-2.5 ${
               activeTab === "pathworking"
@@ -244,6 +256,7 @@ export default function App() {
             {activeTab === "library" && <LibraryView />}
             {activeTab === "oracle" && <OracleView />}
             {activeTab === "cinema" && <CinemaView />}
+            {activeTab === "books" && <BooksView />}
             {activeTab === "pathworking" && <PathworkingView />}
           </AnimatePresence>
         </main>
@@ -1206,7 +1219,243 @@ function CinemaView() {
 }
 
 // ==========================================
-// 4. VIAJE ASTRAL VIEW (Pathworkings & Breath)
+// 4. LIBROS INICIÁTICOS VIEW (Book Analysis)
+// ==========================================
+function BooksView() {
+  const [bookName, setBookName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [errorStr, setErrorStr] = useState("");
+
+  const handleAnalyze = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bookName.trim()) return;
+
+    setLoading(true);
+    setErrorStr("");
+    setResult(null);
+    synthInstance.playChime(261.63, 1.8, "sine"); // Meditative cinematic tone (C4)
+
+    try {
+      const response = await fetch("/api/analyze-book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ book: bookName })
+      });
+      if (!response.ok) {
+        const errVal = await response.json();
+        throw new Error(errVal.error || "Las musas oscurecieron los pergaminos.");
+      }
+      const data = await response.json();
+      setResult(data);
+      synthInstance.playChime(392, 1.5, "triangle"); // success tone (G4)
+    } catch (err: any) {
+      console.error(err);
+      setErrorStr(err.message || "Error al solicitar el análisis literario hermético.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectPreset = (name: string) => {
+    setBookName(name);
+    synthInstance.playChime(330, 0.4);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="max-w-4xl mx-auto flex flex-col gap-6"
+    >
+      <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/20 shadow-xl flex flex-col gap-5">
+        <div className="flex items-center gap-3 border-b border-amber-500/10 pb-4">
+          <BookOpen className="w-6 h-6 text-amber-400 animate-pulse" />
+          <div>
+            <h2 className="text-lg font-bold font-serif text-amber-400">
+              Libros e Iniciación Literaria
+            </h2>
+            <p className="text-xs text-amber-100/60">
+              Analiza libros esotéricos, textos sagrados y manuscritos antiguos bajo la óptica del Gnosticismo, Alta Magia y Alquimia Operativa.
+            </p>
+          </div>
+        </div>
+
+        {/* Cinematic Presets */}
+        <div className="flex flex-wrap gap-1.5 items-center">
+          <span className="text-[10px] text-amber-500/60 uppercase tracking-widest mr-1">Tractos Clásicos:</span>
+          {["El Kybalion", "El Zohar", "La Doctrina Secreta", "Dogma y Ritual de la Alta Magia", "Corpus Hermeticum"].map((f) => (
+            <button
+              key={f}
+              onClick={() => handleSelectPreset(f)}
+              className="px-2.5 py-1 rounded bg-zinc-950 hover:bg-zinc-900 text-[10px] text-amber-200/70 hover:text-amber-200 border border-amber-500/10 transition-all"
+            >
+              📜 {f}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={handleAnalyze} className="flex flex-col sm:flex-row gap-2.5">
+          <input
+            type="text"
+            required
+            value={bookName}
+            onChange={(e) => setBookName(e.target.value)}
+            placeholder="Introduce el título del libro o texto sagrado..."
+            className="flex-grow bg-zinc-950 border border-amber-500/25 rounded-xl py-3 px-4 text-xs text-amber-100 placeholder-zinc-600 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-500/20"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:bg-zinc-800 disabled:text-zinc-600 border border-amber-400 text-zinc-950 font-bold px-6 py-3 rounded-xl text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+          >
+            {loading ? "Analizando..." : "Analizar Gnosis del Libro"}
+            {loading ? (
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-ping" />
+            ) : (
+              <BookOpen className="w-4 h-4 text-zinc-950" />
+            )}
+          </button>
+        </form>
+
+        {errorStr && (
+          <div className="p-4 bg-red-950/20 border border-red-500/30 rounded-xl text-xs text-red-300">
+            ❌ {errorStr}
+          </div>
+        )}
+      </div>
+
+      {loading && (
+        <div className="py-20 flex flex-col items-center justify-center gap-4 bg-zinc-900/10 rounded-2xl border border-amber-500/5">
+          <div className="w-8 h-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+          <p className="text-xs italic text-amber-400 animate-pulse text-center max-w-sm">
+            Escrutando revelaciones gnósticas e identificando arquetipos ocultos entre las páginas de los ancestros...
+          </p>
+        </div>
+      )}
+
+      {result && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-b from-zinc-900 to-zinc-950 rounded-2xl border border-amber-500/25 p-6 shadow-2xl flex flex-col gap-6"
+        >
+          <div className="border-b border-amber-500/10 pb-4 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+            <div>
+              <span className="text-[10px] text-amber-500 uppercase tracking-widest font-mono">REVELACIONES LITERARIAS:</span>
+              <h3 className="text-base font-bold font-serif text-amber-400 uppercase mt-0.5">
+                📖 Decodificación Obra: {bookName}
+              </h3>
+            </div>
+            <span className="text-[9px] text-emerald-500 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10 inline-block font-mono max-w-max">
+              Gnosis Certificada por IA
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-6 text-xs text-amber-100 font-serif leading-relaxed">
+            
+            {result.sinopsis_esoterica && (
+              <div className="p-4 bg-zinc-950 rounded-xl border border-amber-500/10 flex flex-col gap-2 shadow-inner">
+                <h4 className="text-[10px] font-sans font-bold uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-amber-500/60" /> Sinopsis Gnóstica Primordial
+                </h4>
+                <p className="text-justify font-sans text-amber-100/80 leading-relaxed italic border-l-2 border-amber-500/30 pl-3">
+                  {result.sinopsis_esoterica}
+                </p>
+              </div>
+            )}
+
+            {result.arquetipos && result.arquetipos.length > 0 && (
+              <div>
+                <h4 className="text-[10px] font-sans font-bold uppercase tracking-widest text-amber-400 mb-3 flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-amber-500/60" /> Arquetipos Literarios y Figuras
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {result.arquetipos.map((arq: any, idx: number) => (
+                    <div key={idx} className="p-3 bg-zinc-950 rounded-lg border border-amber-500/5 flex flex-col gap-1 shadow">
+                      <span className="font-bold text-amber-350 text-[11px] font-sans">{arq.personaje || arq.concepto || "Buscador"}</span>
+                      <span className="text-[10px] text-amber-500 font-semibold">{arq.arquetipo || "El Camino"}</span>
+                      <p className="text-[10px] text-amber-100/60 font-sans leading-tight mt-1">{arq.significado || arq.descripcion || ""}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {result.simbolos_ocultos && result.simbolos_ocultos.length > 0 && (
+              <div>
+                <h4 className="text-[10px] font-sans font-bold uppercase tracking-widest text-amber-400 mb-3 flex items-center gap-1.5">
+                  <Eye className="w-3.5 h-3.5 text-amber-500/60" /> Símbolos Ocultos y Alegorías
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {result.simbolos_ocultos.map((sim: any, idx: number) => (
+                    <div key={idx} className="p-3 bg-zinc-950 rounded-lg border border-amber-500/5 flex gap-3 items-start shadow">
+                      <span className="text-xl p-1 bg-amber-500/5 rounded border border-amber-500/10">👁️</span>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-bold text-amber-250 text-[11px] font-sans">{sim.elemento || sim.simbolo || "Materia Oscura"}</span>
+                        <p className="text-[10px] text-amber-100/60 font-sans leading-relaxed">{sim.decodificacion || sim.significado || ""}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {result.fases_transmutacion && (
+              <div className="p-5 bg-zinc-950 rounded-xl border border-amber-500/10 flex flex-col gap-4">
+                <h4 className="text-[10px] font-sans font-bold uppercase tracking-widest text-amber-400 border-b border-amber-500/10 pb-2 flex items-center gap-1.5">
+                  <Pyramid className="w-3.5 h-3.5 text-amber-500/60" /> Las Tres Etapas del Ouroboros Literario
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-3 bg-zinc-950/80 rounded-lg border-l-2 border-zinc-500 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.3),transparent)] flex flex-col gap-1">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-zinc-300 text-xs uppercase font-sans">🖤 Nigredo</span>
+                    </div>
+                    <p className="text-[10px] text-amber-100/70 font-sans leading-relaxed mt-1.5">
+                      {result.fases_transmutacion.nigredo || result.fases_transmutacion.fase_1 || ""}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-zinc-950/80 rounded-lg border-l-2 border-amber-200/50 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.02),transparent)] flex flex-col gap-1">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-amber-100 text-xs uppercase font-sans">🤍 Albedo</span>
+                    </div>
+                    <p className="text-[10px] text-amber-100/70 font-sans leading-relaxed mt-1.5">
+                      {result.fases_transmutacion.albedo || result.fases_transmutacion.fase_2 || ""}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-zinc-950/80 rounded-lg border-l-2 border-red-500 bg-[linear-gradient(to_bottom,rgba(239,68,68,0.05),transparent)] flex flex-col gap-1">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-red-400 text-xs uppercase font-sans">❤️ Rubedo</span>
+                    </div>
+                    <p className="text-[10px] text-amber-100/70 font-sans leading-relaxed mt-1.5">
+                      {result.fases_transmutacion.rubedo || result.fases_transmutacion.fase_3 || ""}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {result.conclusion_gnostica && (
+              <div className="mt-2 text-center border-t border-amber-500/10 pt-4 px-2">
+                <span className="text-[8px] uppercase tracking-widest text-amber-500/40 font-mono block mb-1">El Despertar Supremo del Pergamino</span>
+                <p className="italic text-amber-300 font-sans text-sm max-w-2xl mx-auto leading-relaxed">
+                  &ldquo;{result.conclusion_gnostica}&rdquo;
+                </p>
+              </div>
+            )}
+
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+}
+
+// ==========================================
+// 5. VIAJE ASTRAL VIEW (Pathworkings & Breath)
 // ==========================================
 function PathworkingView() {
   const [focusType, setFocusType] = useState<"tarot" | "sefira" | "zodiaco" | "custom">("tarot");
