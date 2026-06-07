@@ -1,0 +1,6 @@
+{
+  "name": "Decodificador Hermético",
+  "description": "Explorador interactivo de cábala, tarot, alquimia, chakras, qlifot, y generador transmutativo de Pathworkings con soporte de inteligencia artificial esotérica.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
