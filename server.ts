@@ -162,7 +162,7 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Hermetic Server Running" });
 });
 
-if (!process.env.VERCEL) {
+if (!process.env.VERCEL && !process.env.IS_DEV_SERVER) {
   const distPath = path.join(process.cwd(), 'dist');
   app.use(express.static(distPath));
   app.get('*', (req, res) => {

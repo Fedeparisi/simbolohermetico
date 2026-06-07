@@ -1,7 +1,9 @@
-import app from "./server";
-import { createServer as createViteServer } from "vite";
+process.env.IS_DEV_SERVER = "true";
 
 async function startDevServer() {
+  const { default: app } = await import("./server.js");
+  const { createServer: createViteServer } = await import("vite");
+
   const vite = await createViteServer({
     server: { middlewareMode: true },
     appType: "spa",
