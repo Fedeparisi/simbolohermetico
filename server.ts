@@ -18,16 +18,25 @@ app.use(express.json());
 
 const PORT = 3000;
 
-// Initialize official Gemini AI client
-const apiKey = process.env.GEMINI_API_KEY || "";
-const ai = new GoogleGenAI({
-  apiKey: apiKey,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    }
+// Lazy initialize official Gemini AI client
+let aiInstance: GoogleGenAI | null = null;
+function getAI() {
+  const apiKey = process.env.GEMINI_API_KEY || "";
+  if (!apiKey) {
+    throw new Error("La clave GEMINI_API_KEY no está configurada en los Secretos/Variables de Entorno.");
   }
-});
+  if (!aiInstance) {
+    aiInstance = new GoogleGenAI({
+      apiKey: apiKey,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
+  }
+  return aiInstance;
+}
 
 // API Route: Custom Esoteric Decoding
 app.post("/api/decode", async (req, res) => {
@@ -37,10 +46,7 @@ app.post("/api/decode", async (req, res) => {
       return res.status(400).json({ error: "Símbolo o término requerido." });
     }
 
-    if (!apiKey) {
-      return res.status(500).json({ error: "La clave GEMINI_API_KEY no está configurada en los Secretos de la aplicación en AI Studio." });
-    }
-
+    const ai = getAI();
     const prompt = `Actúa como un Gran Maestro Hermético experto en Cábala (Árbol de la Vida, Sefirot y Qlifot), Tarot, Alquimia Operativa, Astrología Caldea, Gnosticismo y Magia Ceremonial de órdenes de misterios como la Golden Dawn o los Rosacruces.
     
     Analiza y decodifica el siguiente término o símbolo: "${term}" ${context ? `dentro del contexto o pregunta expresados: "${context}"` : ""}.
@@ -80,10 +86,7 @@ app.post("/api/analyze-movie", async (req, res) => {
       return res.status(400).json({ error: "Nombre de película o serie requerido." });
     }
 
-    if (!apiKey) {
-      return res.status(500).json({ error: "La clave GEMINI_API_KEY no está configurada en los Secretos de la aplicación en AI Studio." });
-    }
-
+    const ai = getAI();
     const prompt = `Actúa como un erudito e historiador de Cine Hermético, Simbología Comparada y Gnosticismo.
     
     Analiza la siguiente obra cinematográfica: "${movie}".
@@ -123,10 +126,7 @@ app.post("/api/generate-pathworking", async (req, res) => {
       return res.status(400).json({ error: "Foco místico (arcano, sefirá, o constelación) requerido." });
     }
 
-    if (!apiKey) {
-      return res.status(500).json({ error: "La clave GEMINI_API_KEY no está configurada en los Secretos de la aplicación en AI Studio." });
-    }
-
+    const ai = getAI();
     const prompt = `Diseña un Pathworking (Visualización Astral Guiada y Meditación Activa de la Imaginación) altamente inmersivo basado en: "${title}" (tipo de enfoque místico: "${focusType}").
     
     El tono tiene que ser profundamente solemne, poético, místico y cargado de misterio venerable (al estilo de los grimorios clásicos o escritos de Israel Regardie y Dion Fortune). Guía al buscador espiritual a través de un viaje astral enriquecedor y seguro por la dimensión espiritual asociada a este concepto.
