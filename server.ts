@@ -91,14 +91,14 @@ app.post("/api/analyze-movie", async (req, res) => {
     
     Analiza la siguiente obra cinematográfica: "${movie}".
     
-    Analízala desde una perspectiva puramente iniciática y esotérica. Desglosa alegorías del cautiverio del demiurgo/falsa realidad, el viaje de iniciación espiritual del alma caída hacia la gnosis (despertar), correspondencias con la Gran Obra Alquímica y detalles cabalísticos.
+    Analízala desde una perspectiva iniciática y esotérica de forma concisa y rápida. Desglosa alegorías del cautiverio del demiurgo/falsa realidad, el viaje de iniciación espiritual del alma caída hacia la gnosis (despertar), correspondencias con la Gran Obra Alquímica y detalles cabalísticos.
     
-    Proporciona un desglose detallado estructurado en JSON estricto con las siguientes claves:
-    - "sinopsis_esoterica": Una síntesis del film interpretando la trama desde el viaje de iniciación espiritual o trascendencia gnóstica.
-    - "arquetipos": Un arreglo o lista de los personajes principales y sus correspondencias arquetípicas iniciáticas (ej: el mentor sabio como El Ermitaño, el protagonista rebelde de la ilusión como El Loco o el Mago, etc.).
-    - "simbolos_ocultos": Una lista de 3 a 5 símbolos visuales (colores, números, objetos, espejos, puertas, animales) que aparecen de fondo con un significado hermético directo y qué significa cada uno.
-    - "fases_transmutacion": Explicación de cómo encajan los actos o etapas de la película con los procesos de la Alquimia Espiritual (Nigredo - fragmentación y crisis; Albedo - el despertar de la sabiduría clara; Rubedo - la integración soberana y transmutación del héroe).
-    - "conclusion_gnostica": Un mensaje final resumiendo la enseñanza espiritual iniciática profunda que el film transmite de forma oculta para los que tienen ojos para ver.
+    Proporciona un desglose estructurado en JSON estricto con las siguientes claves:
+    - "sinopsis_esoterica": Una síntesis del film interpretando la trama desde el viaje de iniciación espiritual o trascendencia gnóstica. (Máximo 3 frases cortas).
+    - "arquetipos": Un arreglo o lista de los personajes principales y sus correspondencias arquetípicas iniciáticas (ej: el mentor sabio como El Ermitaño, el protagonista rebelde de la ilusión como El Loco o el Mago, etc.). (Limítate a los 2 personajes principales).
+    - "simbolos_ocultos": Una lista de 3 símbolos visuales (colores, números, objetos, espejos, puertas, animales) que aparecen de fondo con un significado hermético directo y qué significa cada uno en una frase muy breve.
+    - "fases_transmutacion": Explicación de cómo encajan los actos o etapas de la película con los procesos de la Alquimia Espiritual (Nigredo - fragmentación y crisis; Albedo - el despertar de la sabiduría clara; Rubedo - la integración soberana y transmutación del héroe). (Una frase muy corta por cada fase).
+    - "conclusion_gnostica": Un mensaje final resumiendo la enseñanza espiritual iniciática profunda que el film transmite de forma oculta para los que tienen ojos para ver. (Máximo 2 frases).
 
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin encapsular en bloques markdown, listo para ser consumido directamente.`;
 
@@ -129,14 +129,14 @@ app.post("/api/generate-pathworking", async (req, res) => {
     const ai = getAI();
     const prompt = `Diseña un Pathworking (Visualización Astral Guiada y Meditación Activa de la Imaginación) altamente inmersivo basado en: "${title}" (tipo de enfoque místico: "${focusType}").
     
-    El tono tiene que ser profundamente solemne, poético, místico y cargado de misterio venerable (al estilo de los grimorios clásicos o escritos de Israel Regardie y Dion Fortune). Guía al buscador espiritual a través de un viaje astral enriquecedor y seguro por la dimensión espiritual asociada a este concepto.
+    El tono tiene que ser profundamente solemne, poético y místico. Guía al buscador espiritual a través de un viaje astral enriquecedor y seguro por la dimensión espiritual asociada a este concepto.
     
     Proporciona un desglose estructurado en JSON estricto con las siguientes claves:
-    - "preparacion": Instrucciones físicas, respiratorias y espaciales recomendadas para sentarse en la vigilia astral (respiración rítmica pranayama, mudras protectores, sintonía aromática con inciensos o aceites, colores de velas rituales).
-    - "rumbo": El portal de cruce astral (descripción mística del sigilo celestial, clave tonal, o umbral arquetípico que brilla ante ti para cruzar).
-    - "viaje_narrativo": Un relato largo y bellísimo de meditación de 3-4 párrafos ricos que narre el viaje espiritual. Debe incluir encuentros con guardianes arcangélicos o espectros de sabiduría, simbología del entorno cósmico, y descripciones astrales detalladas escritas en segunda persona singular: "Miras hacia...", "Sientes la sagrada geometría...".
-    - "comunion_ritual": La revelación transmutadora o bendición de luz/sombras puras que ocurre al unificar tu vibración con el regente del sendero.
-    - "retorno": Pasos poéticos para desarmar el cuerpo astral y volver de manera equilibrada y segura a tu vehículo carnal ("siente la pesadez de tus pies, asimila el elixir, contrae tu aura protectivamente...").
+    - "preparacion": Instrucciones físicas, respiratorias y espaciales recomendadas para sentarse en la vigilia astral (respiración rítmica pranayama, mudras protectores, sintonía aromática con inciensos o aceites, colores de velas rituales). (Sé breve y conciso).
+    - "rumbo": El portal de cruce astral (descripción mística del sigilo celestial o umbral arquetípico que brilla ante ti para cruzar). (1-2 oraciones).
+    - "viaje_narrativo": Un relato bellísimo de meditación de máximo 2 párrafos dinámicos que narre el viaje espiritual. Debe incluir encuentros con guardianes arcangélicos o espectros de sabiduría, simbología del entorno cósmico, y descripciones astrales detalladas escritas en segunda persona singular: "Miras hacia...", "Sientes la sagrada geometría...".
+    - "comunion_ritual": La revelación transmutadora o bendición de luz/sombras puras que ocurre al unificar tu vibración con el regente del sendero. (1-2 oraciones).
+    - "retorno": Pasos poéticos para desarmar el cuerpo astral y volver de manera equilibrada y segura a tu vehículo carnal ("siente la pesadez de tus pies, asimila el elixir, contrae tu aura..."). (1-2 oraciones).
     - "mantra_afirmacion": Un antiguo decreto, palabra hebrea de poder o mantra evocativo en sánscrito para sellar y fijar la vibración experimentada en el plano terrenal.
 
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin preámbulos, delimitadores de código markdown ni discursos introductorios.`;
