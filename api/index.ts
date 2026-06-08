@@ -1,26 +1,27 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
-import { Groq } from "groq-sdk";
+import OpenAI from "openai";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-// Lazy initialize Groq client
-let groqInstance: Groq | null = null;
-function getGroq() {
-  const apiKey = process.env.GROQ_API_KEY || "";
+// Lazy initialize DeepSeek client via OpenAI SDK
+let dsInstance: OpenAI | null = null;
+function getAI() {
+  const apiKey = process.env.DEEPSEEK_API_KEY || "";
   if (!apiKey) {
-    throw new Error("La clave GROQ_API_KEY no está configurada en los Secretos/Variables de Entorno o archivo .env.");
+    throw new Error("La clave DEEPSEEK_API_KEY no está configurada en los Secretos/Variables de Entorno o archivo .env.");
   }
-  if (!groqInstance) {
-    groqInstance = new Groq({
+  if (!dsInstance) {
+    dsInstance = new OpenAI({
+      baseURL: 'https://api.deepseek.com',
       apiKey: apiKey,
     });
   }
-  return groqInstance;
+  return dsInstance;
 }
 
 // Robust parsing of JSON returned by the LLM
@@ -41,7 +42,7 @@ app.post("/api/decode", async (req, res) => {
       return res.status(400).json({ error: "Símbolo o término requerido." });
     }
 
-    const groq = getGroq();
+    const ai = getAI();
     const prompt = `Actúa como un Gran Maestro Hermético experto en Cábala (Árbol de la Vida, Sefirot y Qlifot), Tarot, Alquimia Operativa, Astrología Caldea, Gnosticismo y Magia Ceremonial de órdenes de misterios como la Golden Dawn o los Rosacruces.
     
     Analiza y decodifica el siguiente término o símbolo: "${term}" ${context ? `dentro del contexto o pregunta expresados: "${context}"` : ""}.
@@ -57,8 +58,8 @@ app.post("/api/decode", async (req, res) => {
 
     IMPORTANTE: Responde ÚNICAMENTE con el objeto JSON estructurado con el formato exacto requerido, sin rodeos, sin bloques de código con markdown o texto explicativo fuera del JSON, para que pueda ser parseado directamente de manera robusta en JavaScript.`;
 
-    const response = await groq.chat.completions.create({
-      model: "openai/gpt-oss-120b",
+    const response = await ai.chat.completions.create({
+      model: "deepseek-reasoner",
       messages: [
         { role: "user", content: prompt }
       ],
@@ -81,7 +82,7 @@ app.post("/api/analyze-movie", async (req, res) => {
       return res.status(400).json({ error: "Nombre de película o serie requerido." });
     }
 
-    const groq = getGroq();
+    const ai = getAI();
     const prompt = `Actúa como un erudito e historiador de Cine Hermético, Simbología Comparada y Gnosticismo.
     
     Analiza la siguiente obra cinematográfica: "${movie}".
@@ -97,8 +98,8 @@ app.post("/api/analyze-movie", async (req, res) => {
 
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin encapsular en bloques markdown, listo para ser consumido directamente.`;
 
-    const response = await groq.chat.completions.create({
-      model: "openai/gpt-oss-120b",
+    const response = await ai.chat.completions.create({
+      model: "deepseek-reasoner",
       messages: [
         { role: "user", content: prompt }
       ],
@@ -121,7 +122,7 @@ app.post("/api/analyze-book", async (req, res) => {
       return res.status(400).json({ error: "Nombre del libro o texto sagrado requerido." });
     }
 
-    const groq = getGroq();
+    const ai = getAI();
     const prompt = `Actúa como un erudito e historiador de Literatura Esotérica, Simbología Comparada, Alta Magia y Gnosticismo.
     
     Analiza la siguiente obra literaria o texto sagrado: "${book}".
@@ -137,8 +138,8 @@ app.post("/api/analyze-book", async (req, res) => {
 
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin encapsular en bloques markdown, listo para ser consumido directamente.`;
 
-    const response = await groq.chat.completions.create({
-      model: "openai/gpt-oss-120b",
+    const response = await ai.chat.completions.create({
+      model: "deepseek-reasoner",
       messages: [
         { role: "user", content: prompt }
       ],
@@ -161,7 +162,7 @@ app.post("/api/generate-pathworking", async (req, res) => {
       return res.status(400).json({ error: "Foco místico (arcano, sefirá, o constelación) requerido." });
     }
 
-    const groq = getGroq();
+    const ai = getAI();
     const prompt = `Diseña un Pathworking (Visualización Astral Guiada y Meditación Activa de la Imaginación) altamente inmersivo basado en: "${title}" (tipo de enfoque místico: "${focusType}").
     
     El tono tiene que ser profundamente solemne, poético y místico. Guía al buscador espiritual a través de un viaje astral enriquecedor y seguro por la dimensión espiritual asociada a este concept.
@@ -176,8 +177,8 @@ app.post("/api/generate-pathworking", async (req, res) => {
 
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin preámbulos, delimitadores de código markdown ni discursos introductorios.`;
 
-    const response = await groq.chat.completions.create({
-      model: "openai/gpt-oss-120b",
+    const response = await ai.chat.completions.create({
+      model: "deepseek-reasoner",
       messages: [
         { role: "user", content: prompt }
       ],

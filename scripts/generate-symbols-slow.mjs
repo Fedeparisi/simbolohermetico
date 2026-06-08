@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,18 +13,21 @@ const OUT_PATH = path.join(__dirname, '../src/symbolsData.ts');
 const PROGRESS_FILE = path.join(__dirname, 'progress.json');
 
 // Get API Key
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = process.env.DEEPSEEK_API_KEY;
 if (!apiKey) {
-  console.error("GEMINI_API_KEY no encontrada en .env");
+  console.error("DEEPSEEK_API_KEY no encontrada en .env");
   process.exit(1);
 }
-const ai = new GoogleGenAI({ apiKey });
+const ai = new OpenAI({ 
+  baseURL: 'https://api.deepseek.com',
+  apiKey: apiKey 
+});
 
 // Helper para esperar
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 async function main() {
-  console.log("Iniciando generación profunda y lenta...");
+  console.log("Iniciando generación profunda y lenta con DeepSeek...");
   
   // 1. Parsear el archivo original de temas
   const mdContent = fs.readFileSync(MD_PATH, 'utf-8');
@@ -114,7 +117,7 @@ async function main() {
     }
   }
 
-  // 3. Procesar con Gemini respetando 15 RPM (1 req cada 4 segs -> usamos 5 segs por seguridad)
+  // 3. Procesar con DeepSeek
   for (let i = 0; i < allSymbols.length; i++) {
     const symbol = allSymbols[i];
     if (progressData[symbol.id]) {
@@ -150,8 +153,11 @@ Formato de respuesta EXACTO:
     
     while (!success && attempts < 5) {
       try {
-        const result = await ai.models.generateContent({ model: "gemini-2.5-flash", contents: prompt });
-        const text = result.text || "";
+        const response = await ai.chat.completions.create({
+          model: "deepseek-reasoner",
+          messages: [{ role: "user", content: prompt }]
+        });
+        const text = response.choices[0]?.message?.content || "";
         
         let beginnerMatch = text.match(/---BEGINNER---\s*([\s\S]*?)\s*---INTERMEDIATE---/i);
         let intermediateMatch = text.match(/---INTERMEDIATE---\s*([\s\S]*?)\s*---ADVANCED---/i);
@@ -170,18 +176,18 @@ Formato de respuesta EXACTO:
         fs.writeFileSync(PROGRESS_FILE, JSON.stringify(progressData, null, 2));
         
         success = true;
-        // Esperar 6 segundos entre peticiones exitosas para respetar el límite estricto
-        await sleep(6000); 
+        // Esperar 1.5 segundos entre peticiones exitosas
+        await sleep(1500); 
 
       } catch (error) {
         attempts++;
         console.error(`  Error en intento ${attempts}:`, error.message);
         if (error.message.includes('429') || error.message.includes('Quota')) {
-          console.log(`  Sobrecarga de cuota. Esperando 60 segundos...`);
-          await sleep(60000);
-        } else {
-          console.log(`  Esperando 10 segundos antes de reintentar...`);
+          console.log(`  Sobrecarga de cuota. Esperando 10 segundos...`);
           await sleep(10000);
+        } else {
+          console.log(`  Esperando 5 segundos antes de reintentar...`);
+          await sleep(5000);
         }
       }
     }
@@ -196,9 +202,6 @@ Formato de respuesta EXACTO:
 
   console.log("¡Generación completa! Escribiendo archivo symbolsData.ts...");
 
-  // 4. Leer el symbolsData.ts original y reemplazar todo con la versión profunda.
-  // Wait, no. We read the current file and just replace the CATEGORIES and SYMBOLS_DATABASE sections.
-  
   let originalFile = fs.readFileSync(OUT_PATH, 'utf-8');
 
   let newCatsStr = '';
