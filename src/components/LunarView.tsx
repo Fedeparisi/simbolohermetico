@@ -279,7 +279,7 @@ export function LunarView() {
                     : "border-transparent hover:border-amber-500/20 hover:bg-amber-500/5 text-zinc-400"
               }`}
             >
-              <div className="w-9 h-9 drop-shadow-md">
+              <div className="w-8 h-8 sm:w-12 sm:h-12 drop-shadow-md">
                 <MoonPhaseSVG phase={day.phase.phase} />
               </div>
               <span className="text-[9px]">{day.date.getDate()}</span>
@@ -300,7 +300,7 @@ export function LunarView() {
             { phase: 25.84, label: "Menguante" }
           ].map(s => (
             <div key={s.label} className="flex items-center gap-1.5 opacity-60">
-              <div className="w-5 h-5"><MoonPhaseSVG phase={s.phase} /></div>
+              <div className="w-6 h-6"><MoonPhaseSVG phase={s.phase} /></div>
               <span className="text-[9px] text-zinc-300">{s.label}</span>
             </div>
           ))}
