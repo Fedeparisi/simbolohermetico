@@ -25,6 +25,60 @@ function getMoonPhase(date: Date): { phase: number; name: string; emoji: string;
   return { phase, name, emoji, illumination };
 }
 
+const MoonPhaseSVG = ({ phase, className = "w-full h-full" }: { phase: number, className?: string }) => {
+  const phaseNorm = (phase % 29.53058867) / 29.53058867;
+  const isWaxing = phaseNorm <= 0.5;
+  const p = isWaxing ? phaseNorm * 2 : (phaseNorm - 0.5) * 2;
+  const rx = Math.max(0.01, 50 * Math.abs(1 - p * 2));
+  const sweep = p >= 0.5 ? 1 : 0;
+
+  const d = isWaxing
+    ? `M 50 0 A 50 50 0 0 1 50 100 A ${rx} 50 0 0 ${sweep} 50 0 Z`
+    : `M 50 0 A 50 50 0 0 0 50 100 A ${rx} 50 0 0 ${sweep} 50 0 Z`;
+
+  // Provide a unique ID for the clip path so multiple moons on screen don't collide
+  const clipId = `lit-clip-${Math.random().toString(36).substr(2, 9)}`;
+
+  return (
+    <svg viewBox="-10 -10 120 120" className={className}>
+      <defs>
+        <radialGradient id="moon-glow" cx="30%" cy="30%" r="70%">
+          <stop offset="0%" stopColor="#fffbeb" />
+          <stop offset="50%" stopColor="#fde68a" />
+          <stop offset="100%" stopColor="#b45309" />
+        </radialGradient>
+        <filter id="glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+      
+      {/* Dark Unlit Moon */}
+      <circle cx="50" cy="50" r="50" fill="#18181b" stroke="#3f3f46" strokeWidth="1" />
+      
+      {/* Subtle craters on dark side */}
+      <circle cx="30" cy="40" r="6" fill="#27272a" />
+      <circle cx="65" cy="35" r="10" fill="#27272a" />
+      <circle cx="45" cy="70" r="8" fill="#27272a" />
+      <circle cx="70" cy="65" r="5" fill="#27272a" />
+
+      {/* Lit Phase */}
+      <path d={d} fill="url(#moon-glow)" filter="url(#glow-filter)" />
+      
+      {/* Subtle craters on lit side */}
+      <g clipPath={`url(#${clipId})`}>
+        <clipPath id={clipId}>
+          <path d={d} />
+        </clipPath>
+        <circle cx="30" cy="40" r="6" fill="#78350f" opacity="0.25" />
+        <circle cx="65" cy="35" r="10" fill="#78350f" opacity="0.25" />
+        <circle cx="45" cy="70" r="8" fill="#78350f" opacity="0.25" />
+        <circle cx="70" cy="65" r="5" fill="#78350f" opacity="0.25" />
+      </g>
+    </svg>
+  );
+};
+
 interface LunarDay {
   date: Date;
   phase: ReturnType<typeof getMoonPhase>;
@@ -144,8 +198,10 @@ export function LunarView() {
         {/* Today highlight */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-1 bg-zinc-950 rounded-xl border border-amber-500/20 p-5 flex flex-col items-center gap-3">
-            <div className="text-6xl">{todayPhase.emoji}</div>
-            <div className="text-center">
+            <div className="w-32 h-32 drop-shadow-2xl">
+              <MoonPhaseSVG phase={todayPhase.phase} />
+            </div>
+            <div className="text-center mt-2">
               <div className="text-base font-bold font-serif text-amber-400">{todayPhase.name}</div>
               <div className="text-xs text-amber-100/60">Hoy, {today.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" })}</div>
             </div>
@@ -215,24 +271,38 @@ export function LunarView() {
             <button
               key={day.date.toISOString()}
               onClick={() => { setSelectedDay(day); synthInstance.playChime(330, 0.4); }}
-              className={`aspect-square rounded-lg flex flex-col items-center justify-center gap-0.5 border transition-all text-[9px] ${
+              className={`aspect-square rounded-lg flex flex-col items-center justify-center gap-1 border transition-all text-[9px] ${
                 day.isToday
-                  ? "border-amber-500/60 bg-amber-500/15 text-amber-300 font-bold"
+                  ? "border-amber-500/60 bg-amber-500/15 text-amber-300 font-bold shadow-[0_0_15px_rgba(251,191,36,0.2)]"
                   : selectedDay?.date.toDateString() === day.date.toDateString()
                     ? "border-purple-500/40 bg-purple-500/10 text-purple-300"
                     : "border-transparent hover:border-amber-500/20 hover:bg-amber-500/5 text-zinc-400"
               }`}
             >
-              <span className="text-base leading-none">{day.phase.emoji}</span>
+              <div className="w-9 h-9 drop-shadow-md">
+                <MoonPhaseSVG phase={day.phase.phase} />
+              </div>
               <span className="text-[9px]">{day.date.getDate()}</span>
             </button>
           ))}
         </div>
 
         {/* Phase legend */}
-        <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-amber-500/10">
-          {["🌑 Nueva", "🌒 Creciente", "🌓 Cuarto +", "🌔 Gibosa +", "🌕 Llena", "🌖 Gibosa -", "🌗 Cuarto -", "🌘 Menguante"].map(s => (
-            <span key={s} className="text-[9px] text-zinc-500">{s}</span>
+        <div className="flex flex-wrap gap-3 mt-4 pt-3 border-t border-amber-500/10 items-center justify-center">
+          {[
+            { phase: 0, label: "Nueva" },
+            { phase: 3.69, label: "Creciente" },
+            { phase: 7.38, label: "Cuarto +" },
+            { phase: 11.07, label: "Gibosa +" },
+            { phase: 14.76, label: "Llena" },
+            { phase: 18.45, label: "Gibosa -" },
+            { phase: 22.15, label: "Cuarto -" },
+            { phase: 25.84, label: "Menguante" }
+          ].map(s => (
+            <div key={s.label} className="flex items-center gap-1.5 opacity-60">
+              <div className="w-4.5 h-4.5"><MoonPhaseSVG phase={s.phase} /></div>
+              <span className="text-[9px] text-zinc-300">{s.label}</span>
+            </div>
           ))}
         </div>
       </div>
@@ -247,8 +317,10 @@ export function LunarView() {
             className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-5 rounded-2xl border border-purple-500/20 shadow-xl"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{selectedDay.phase.emoji}</span>
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 drop-shadow-xl">
+                  <MoonPhaseSVG phase={selectedDay.phase.phase} />
+                </div>
                 <div>
                   <div className="text-sm font-bold font-serif text-amber-400">{selectedDay.phase.name}</div>
                   <div className="text-xs text-zinc-500">
