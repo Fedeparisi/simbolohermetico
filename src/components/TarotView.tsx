@@ -179,24 +179,24 @@ export function TarotView() {
     setAiReading(null);
     setSelectedCard(null);
     setError("");
-    synthInstance.playChime(330, 1.5, "triangle");
+    synthInstance.playBowl(180, 3.5); // Deep singing bowl fundamental (180Hz) on shuffle
   };
 
   const revealCard = (i: number) => {
     setRevealed(prev => { const n = [...prev]; n[i] = true; return n; });
-    synthInstance.playChime(370 + i * 30, 1.0, "sine");
+    synthInstance.playBowl(220 + i * 40, 3.0); // Ascending singing bowl frequencies on reveal
   };
 
   const revealAll = () => {
     setRevealed(new Array(drawn.length).fill(true));
-    synthInstance.playChime(440, 1.5, "sine");
+    synthInstance.playBowl(294, 3.5); // Clear mid-tone singing bowl when revealing all
   };
 
   const handleAIReading = async () => {
     if (drawn.length === 0) return;
     setAiLoading(true);
     setError("");
-    synthInstance.playChime(294, 2.0, "triangle");
+    synthInstance.playBowl(150, 4.0); // Very deep resonant bowl while loading AI
     try {
       const data = await safeFetchJSON("/api/tarot-reading", {
         method: "POST",
@@ -212,13 +212,14 @@ export function TarotView() {
         })
       }, "Las sibilas callaron. El oráculo duerme.");
       setAiReading(data);
-      synthInstance.playChime(523, 2.5, "sine");
+      synthInstance.playBowl(330, 4.5); // High clear resonant bowl on AI success
     } catch (e: any) {
       setError(e.message);
     } finally {
       setAiLoading(false);
     }
   };
+
 
   const suitColor = (suit: string) => ({
     major: "border-amber-500/40 bg-amber-500/5",
