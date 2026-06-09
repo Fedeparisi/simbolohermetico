@@ -24,6 +24,8 @@ import { AstrologyView } from "./components/AstrologyView";
 import { MeditationView } from "./components/MeditationView";
 import { KundaliniView } from "./components/KundaliniView";
 import { RitualsView } from "./components/RitualsView";
+import { VisualizationView } from "./components/VisualizationView";
+import { MagicPathTest } from "./components/MagicPathTest";
 
 // Import existing views inline (they stay in App.tsx for now — refactor optional)
 import {
@@ -35,7 +37,7 @@ import {
 // ─── Navigation Configuration ─────────────────────────────────────────────
 type ViewId =
   | "library" | "oracle" | "cinema" | "books" | "pathworking"
-  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals";
+  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path";
 
 interface NavItem {
   id: ViewId;
@@ -63,6 +65,8 @@ const NAV_ITEMS: NavItem[] = [
   { id: "meditations", label: "Meditaciones", icon: <Waves className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🧘", isNew: true },
   { id: "kundalini", label: "Kundalini", icon: <Activity className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🌀", isNew: true },
   { id: "rituals", label: "Rituales", icon: <Shield className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🛡️", isNew: true },
+  { id: "visualization", label: "Visualización", icon: <Eye className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "💎", isNew: true },
+  { id: "magic_path", label: "Test de Sendero", icon: <Compass className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🔌", isNew: true },
   // Análisis Profundo
   { id: "dreams", label: "Análisis de Sueños", icon: <Eye className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "🔮", isNew: true },
   { id: "astrology", label: "Astrología", icon: <BarChart3 className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "📊", isNew: true },
@@ -318,6 +322,8 @@ export default function App() {
             {activeView === "meditations" && <MeditationView key="meditations" />}
             {activeView === "kundalini" && <KundaliniView key="kundalini" />}
             {activeView === "rituals" && <RitualsView key="rituals" />}
+            {activeView === "visualization" && <VisualizationView key="visualization" />}
+            {activeView === "magic_path" && <MagicPathTest key="magic_path" />}
           </AnimatePresence>
         </main>
       </div>
