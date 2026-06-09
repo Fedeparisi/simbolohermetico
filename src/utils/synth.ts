@@ -17,29 +17,10 @@ export class CelestialSynth {
   }
 
   playChime(freq: number = 294, duration: number = 2.0, type: "sine" | "triangle" = "sine") {
-    if (this.isMuted) return;
-    try {
-      this.initCtx();
-      if (!this.ctx) return;
-      const osc = this.ctx.createOscillator();
-      const gainNode = this.ctx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      if (type === "sine") {
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.5, this.ctx.currentTime + 0.1);
-        osc.frequency.exponentialRampToValueAtTime(freq, this.ctx.currentTime + 0.5);
-      }
-      gainNode.gain.setValueAtTime(0.001, this.ctx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + 0.08);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-      osc.connect(gainNode);
-      gainNode.connect(this.ctx.destination);
-      osc.start();
-      osc.stop(this.ctx.currentTime + duration);
-    } catch (e) {
-      console.warn("Web Audio API blocked", e);
-    }
+    // Redirect to playBowl to give a rich singing bowl sound on all app interactions
+    this.playBowl(freq, duration);
   }
+
 
   playBowl(freq: number = 220, duration: number = 4.0) {
     if (this.isMuted) return;
