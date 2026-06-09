@@ -27,11 +27,29 @@ function getAI() {
 // Robust parsing of JSON returned by the LLM
 function parseLLMResponse(text: string) {
   let cleaned = text.trim();
-  // Strip markdown formatting if it wrapped the JSON
+  // Strip markdown code fences if present
   if (cleaned.startsWith("```")) {
     cleaned = cleaned.replace(/^```(json)?\s*/i, "").replace(/\s*```$/, "");
   }
-  return JSON.parse(cleaned);
+  // Remove bad control characters (\x00-\x1F except \t \n \r) that break JSON.parse
+  // but keep them inside string values by only sanitizing outside of string context
+  cleaned = cleaned.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+  // Replace literal newlines inside JSON string values with \n escape
+  // Strategy: parse with a reviver that sanitizes string values
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    // Fallback: aggressively escape unescaped control chars inside strings
+    const sanitized = cleaned.replace(
+      /"((?:[^"\\]|\\.)*)"/g,
+      (_match: string, inner: string) =>
+        '"' + inner
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r')
+          .replace(/\t/g, '\\t') + '"'
+    );
+    return JSON.parse(sanitized);
+  }
 }
 
 // API Route: Custom Esoteric Decoding
@@ -59,7 +77,7 @@ app.post("/api/decode", async (req, res) => {
     IMPORTANTE: Responde ÚNICAMENTE con el objeto JSON estructurado con el formato exacto requerido, sin rodeos, sin bloques de código con markdown o texto explicativo fuera del JSON, para que pueda ser parseado directamente de manera robusta en JavaScript.`;
 
     const response = await ai.chat.completions.create({
-      model: "deepseek-reasoner",
+      model: "deepseek-chat",
       messages: [
         { role: "user", content: prompt }
       ],
@@ -99,7 +117,7 @@ app.post("/api/analyze-movie", async (req, res) => {
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin encapsular en bloques markdown, listo para ser consumido directamente.`;
 
     const response = await ai.chat.completions.create({
-      model: "deepseek-reasoner",
+      model: "deepseek-chat",
       messages: [
         { role: "user", content: prompt }
       ],
@@ -139,7 +157,7 @@ app.post("/api/analyze-book", async (req, res) => {
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin encapsular en bloques markdown, listo para ser consumido directamente.`;
 
     const response = await ai.chat.completions.create({
-      model: "deepseek-reasoner",
+      model: "deepseek-chat",
       messages: [
         { role: "user", content: prompt }
       ],
@@ -178,7 +196,7 @@ app.post("/api/generate-pathworking", async (req, res) => {
     Responde ÚNICAMENTE con el objeto JSON estructurado, sin preámbulos, delimitadores de código markdown ni discursos introductorios.`;
 
     const response = await ai.chat.completions.create({
-      model: "deepseek-reasoner",
+      model: "deepseek-chat",
       messages: [
         { role: "user", content: prompt }
       ],
@@ -193,9 +211,184 @@ app.post("/api/generate-pathworking", async (req, res) => {
   }
 });
 
+// ── NEW ENDPOINT: Gematria AI Interpretation ──────────────────────────────
+app.post("/api/gematria", async (req, res) => {
+  try {
+    const { word, value, katan } = req.body;
+    if (!word) return res.status(400).json({ error: "Palabra requerida." });
+    const ai = getAI();
+    const prompt = `Actúa como un cabalista experto. Analiza el valor gematría de la palabra "${word}" que tiene un valor de Mispar Gadol: ${value} y raíz digital (Mispar Katan): ${katan}.
+
+Responde ÚNICAMENTE con JSON con estas claves:
+- "significado_numerologico": significado del número ${value} en numerología sagrada y kábala (1-2 frases)
+- "conexion_cabala": qué Sefirot, senderos o conceptos del Árbol de la Vida se asocian a este número
+- "equivalencias_hebreas": palabras hebreas famosas con el mismo valor gematría
+- "practica": una contemplación o práctica meditativa breve usando este número
+- "paradoja": una paradoja hermética corta sobre el número
+
+Solo JSON, sin markdown.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── NEW ENDPOINT: Sigil Ritual ────────────────────────────────────────────
+app.post("/api/sigil-ritual", async (req, res) => {
+  try {
+    const { intent, letters } = req.body;
+    if (!intent) return res.status(400).json({ error: "Intención requerida." });
+    const ai = getAI();
+    const prompt = `Actúa como maestro de Magia del Caos y Ocultismo. El practicante creó un sigilo para manifestar: "${intent}". Las letras activas del sigilo son: "${letters}".
+
+Diseña un ritual de activación del sigilo. Responde ÚNICAMENTE con JSON:
+- "preparacion": cómo preparar el espacio (incienso, colores, hora del día, estado mental) - 2 frases
+- "activacion": el método de activación del sigilo (mirar fijamente, meditación, destrucción ritual, etc.) - 2-3 frases
+- "sellado": cómo sellar el trabajo y activar el olvido consciente - 1-2 frases  
+- "mantra": un mantra o decreto corto en inglés, español o latín para recitar durante la activación
+
+Solo JSON, sin markdown.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── NEW ENDPOINT: Tarot Reading ───────────────────────────────────────────
+app.post("/api/tarot-reading", async (req, res) => {
+  try {
+    const { question, spread, cards } = req.body;
+    if (!cards?.length) return res.status(400).json({ error: "Cartas requeridas." });
+    const ai = getAI();
+    const cardsDesc = cards.map((c: any) => `${c.position}: ${c.name}${c.reversed ? " (invertida)" : ""}`).join(", ");
+    const prompt = `Eres un tarotista hermético experto en Cábala y Magia de la Golden Dawn. Interpreta la tirada de Tarot: ${spread}.
+${question ? `Pregunta del consultante: "${question}"` : "Sin pregunta específica — lectura de energía general."}
+Cartas reveladas: ${cardsDesc}
+
+Responde ÚNICAMENTE con JSON:
+- "lectura_general": interpretación profunda y detallada de la tirada (3-4 frases). DEBES MENCIONAR EXPLÍCITAMENTE LOS NOMBRES DE LAS CARTAS REVELADAS (ej. "El hecho de que El Loco salga junto a La Muerte indica..."). Explica claramente la alquimia y la interacción entre estas cartas específicas para formar un mensaje global único de esta tirada.
+- "cartas": array con { posicion, carta, interpretacion } para cada carta. La "interpretacion" debe ser profunda (2-3 frases) y explicar detalladamente qué significa esa carta específicamente en esa posición.
+- "mensaje_final": consejo final inspirador del oráculo (1-2 frases).
+
+Solo JSON puro, sin markdown ni explicaciones adicionales.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── NEW ENDPOINT: Dream Analysis ──────────────────────────────────────────
+app.post("/api/dream-analysis", async (req, res) => {
+  try {
+    const { dream, emotion, recurring } = req.body;
+    if (!dream) return res.status(400).json({ error: "Descripción del sueño requerida." });
+    const ai = getAI();
+    const prompt = `Actúa como psicoanalista junguiano y hermetista. Analiza el siguiente sueño:
+"${dream}"
+Emoción predominante al despertar: ${emotion || "no especificada"}
+Sueño recurrente: ${recurring ? "Sí" : "No"}
+
+Responde ÚNICAMENTE con JSON:
+- "sinopsis_onirica": lectura general del sueño desde la perspectiva del inconsciente (2-3 frases)
+- "arquetipos_presentes": arquetipos junguianos identificados (Sombra, Anima/Animus, Sí-mismo, Héroe, etc.) y su rol en el sueño
+- "simbolos_hermeticos": 3-4 símbolos herméticos presentes y su significado esotérico
+- "mensaje_inconsciente": el mensaje que el inconsciente intenta comunicar (1-2 frases directas)
+- "integracion_sombra": si hay elementos de sombra, cómo trabajarlos
+- "practica_integradora": una práctica concreta (escritura, meditación, ritual) para integrar el mensaje del sueño
+- "oraculo_final": frase oracular hermética de cierre
+
+Solo JSON, sin markdown.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── NEW ENDPOINT: Magical Correspondences + Ritual ────────────────────────
+app.post("/api/correspondencias", async (req, res) => {
+  try {
+    const { objetivo, correspondencias } = req.body;
+    if (!objetivo) return res.status(400).json({ error: "Objetivo mágico requerido." });
+    const ai = getAI();
+    const corrStr = correspondencias && Object.keys(correspondencias).length
+      ? `Correspondencias ya conocidas: planeta ${correspondencias.planeta}, sefirá ${correspondencias.sefira}, elemento ${correspondencias.element}.`
+      : "";
+    const prompt = `Actúa como Maestro de Magia Ceremonial y Hermetismo. El practicante quiere realizar magia para: "${objetivo}". ${corrStr}
+
+Diseña un ritual ceremonial completo y efectivo. Responde ÚNICAMENTE con JSON:
+- "propicio": mejor momento astral para realizar este trabajo (día de la semana, fase lunar, hora planetaria)
+- "preparacion": lista de materiales y preparación del espacio sagrado (colores, velas, incienso, cristales, hierbas)
+- "ritual": el ritual paso a paso, detallado y práctico (4-6 pasos numerados)
+- "cierre": cómo cerrar el ritual, agradecer y sellar el trabajo
+- "mantra": decreto o mantra de poder para recitar durante el ritual
+
+Solo JSON, sin markdown.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── NEW ENDPOINT: Astrology Interpretation ────────────────────────────────
+app.post("/api/astrology", async (req, res) => {
+  try {
+    const { planets, ascendant, birthDate, city } = req.body;
+    if (!planets?.length) return res.status(400).json({ error: "Datos planetarios requeridos." });
+    const ai = getAI();
+    const planetsDesc = planets.map((p: any) => `${p.name} en ${p.sign} Casa ${p.house}${p.retro ? " (Retrógrado)" : ""}`).join("; ");
+    const prompt = `Actúa como astrólogo hermético experto en Cábala y Hermetismo. Interpreta esta carta natal:
+Ascendente: ${ascendant}
+Planetas: ${planetsDesc}
+Fecha de nacimiento: ${birthDate}, ${city}
+
+Responde ÚNICAMENTE con JSON:
+- "perfil_alma": descripción profunda del alma encarnada según el ascendente y luminarias (Sol y Luna) - 2-3 frases
+- "sol_luna_ascendente": trinidad fundamental Sol/Luna/Ascendente y cómo interactúan
+- "planetas_destacados": 2-3 planetas más significativos de la carta y su influencia
+- "mision_karmica": propósito kármico del alma basado en la posición de los planetas generacionales (Urano, Neptuno, Plutón)
+- "correspondencias_hermeticas": correlaciones con el Árbol de la Vida, Sefirot y senderos del Árbol de la Vida cabalístico
+- "decreto": frase de poder oracular para que el nativo afirme su misión
+
+Solo JSON, sin markdown.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "Hermetic Server Running" });
+  res.json({ status: "ok", message: "Hermetic Server Running — Phase 1 Complete" });
 });
 
 export default app;

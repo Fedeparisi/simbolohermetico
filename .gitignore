@@ -6,3 +6,14 @@ coverage/
 *.log
 .env
 !.env.example
+
+.vercel
+.env*.local
+
+# Large binaries and temp files
+*.pdf
+*.docx
+~$*
+spa.traineddata
+scripts/
+
