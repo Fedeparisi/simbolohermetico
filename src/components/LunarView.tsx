@@ -300,7 +300,7 @@ export function LunarView() {
             { phase: 25.84, label: "Menguante" }
           ].map(s => (
             <div key={s.label} className="flex items-center gap-1.5 opacity-60">
-              <div className="w-4.5 h-4.5"><MoonPhaseSVG phase={s.phase} /></div>
+              <div className="w-5 h-5"><MoonPhaseSVG phase={s.phase} /></div>
               <span className="text-[9px] text-zinc-300">{s.label}</span>
             </div>
           ))}
