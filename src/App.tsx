@@ -4,6 +4,18 @@
  * Hermético 2.0 — Full Phase 1 Implementation
  */
 
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  BookOpen, Film, Sparkles, Compass, Volume2, VolumeX,
+  Pyramid, Hash, Star, Moon, Eye, Zap, ChevronLeft,
+  ChevronRight, Menu, X, BarChart3, Shield, Brain
+} from "lucide-react";
+import { SYMBOLS_DATABASE, CATEGORIES, EsotericSymbol } from "./symbolsData";
+import { synthInstance } from "./utils/synth";
+import { safeFetchJSON } from "./utils/api";
+
+
 const GematriaView = React.lazy(() => import("./components/GematriaView").then(m => ({ default: m.GematriaView })));
 const SigilView = React.lazy(() => import("./components/SigilView").then(m => ({ default: m.SigilView })));
 const TarotView = React.lazy(() => import("./components/TarotView").then(m => ({ default: m.TarotView })));
