@@ -423,4 +423,42 @@ Solo JSON puro, sin markdown.`;
   }
 });
 
+// ── NEW ENDPOINT: Generate Story ───────────────────────────────────────
+app.post("/api/generate-story", async (req, res) => {
+  try {
+    const { movies, books } = req.body;
+    if (!movies || !books) return res.status(400).json({ error: "Películas y libros requeridos." });
+    const ai = getAI();
+    const prompt = `Actúa como un tejedor de destinos herméticos. Crea un cuento esotérico corto y personalizado (máximo 3 párrafos) donde el protagonista viva una historia de iniciación inspirada en los arquetipos de estas películas: "${movies}" y estos libros: "${books}".
+    Responde ÚNICAMENTE con un JSON con la clave "story" conteniendo el cuento.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── NEW ENDPOINT: Generate Monomyth Scene ──────────────────────────────
+app.post("/api/generate-monomyth", async (req, res) => {
+  try {
+    const { promptText } = req.body;
+    if (!promptText) return res.status(400).json({ error: "Prompt requerido." });
+    const ai = getAI();
+    const prompt = `Actúa como un Maestro del Juego de Rol Esotérico. ${promptText}
+    Responde ÚNICAMENTE con un JSON con la clave "scene" conteniendo la descripción vívida de la escena.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 export default app;

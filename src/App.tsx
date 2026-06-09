@@ -28,6 +28,7 @@ import { VisualizationView } from "./components/VisualizationView";
 import { MagicPathTest } from "./components/MagicPathTest";
 import { ArchetypeView } from "./components/ArchetypeView";
 import { Pathworking22View } from "./components/Pathworking22View";
+import { MapaGeneticoCompleto } from "./components/MapaGeneticoCompleto";
 
 // Import existing views inline (they stay in App.tsx for now — refactor optional)
 import {
@@ -39,7 +40,7 @@ import {
 // ─── Navigation Configuration ─────────────────────────────────────────────
 type ViewId =
   | "library" | "oracle" | "cinema" | "books" | "pathworking"
-  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path" | "archetype" | "pathworking22";
+  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path" | "archetype" | "pathworking22" | "mapa_genetico";
 
 interface NavItem {
   id: ViewId;
@@ -74,6 +75,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "astrology", label: "Astrología", icon: <BarChart3 className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "📊", isNew: true },
   { id: "archetype", label: "Arquetipos", icon: <Brain className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "🎭", isNew: true },
   { id: "pathworking22", label: "Árbol de la Vida", icon: <Layers className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "🌳", isNew: true },
+  { id: "mapa_genetico", label: "Mapa Genético", icon: <Star className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "📜", isNew: true },
 ];
 
 const CATEGORIES_ORDER = ["📚 Estudio Hermético", "⚗️ Herramientas Mágicas", "🧘 Práctica Espiritual", "🔬 Análisis Profundo"];
@@ -330,6 +332,7 @@ export default function App() {
             {activeView === "magic_path" && <MagicPathTest key="magic_path" />}
             {activeView === "archetype" && <ArchetypeView key="archetype" />}
             {activeView === "pathworking22" && <Pathworking22View key="pathworking22" />}
+            {activeView === "mapa_genetico" && <MapaGeneticoCompleto key="mapa_genetico" />}
           </AnimatePresence>
         </main>
       </div>
