@@ -391,4 +391,36 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Hermetic Server Running — Phase 1 Complete" });
 });
 
+// ── NEW ENDPOINT: Archetype Interpretation ───────────────────────────────
+app.post("/api/archetype", async (req, res) => {
+  try {
+    const { archetypes, answers } = req.body;
+    if (!archetypes?.length) return res.status(400).json({ error: "Arquetipos requeridos." });
+    const ai = getAI();
+    const archetypesDesc = archetypes.map((a: any) => `${a.name}: ${a.percent}%`).join("; ");
+    const prompt = `Actúa como psicoanalista junguiano y teúrgo de la Golden Dawn. Interpreta el siguiente perfil de arquetipos de personalidad cruzado con el Tarot:
+${archetypesDesc}
+
+Respuestas clave dadas por el buscador:
+${JSON.stringify(answers)}
+
+Responde ÚNICAMENTE con un objeto JSON estricto con las siguientes claves:
+- "descripcion_perfil": Análisis psicológico y esotérico del perfil resultante (3-4 frases).
+- "arquetipo_dominante": Análisis del arquetipo principal, su luz y su sombra (2-3 frases).
+- "integracion_sombra": Ejercicio o pauta de integración de la Sombra y reconciliación de opuestos según el perfil (2-3 frases).
+- "consejo_teurgico": Consejo práctico de teúrgia/magia ceremonial o meditación para equilibrar estas energías en el Árbol de la Vida (2-3 frases).
+- "decreto": Una frase oracular solemne de afirmación del Ser.
+
+Solo JSON puro, sin markdown.`;
+    const r = await ai.chat.completions.create({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" }
+    });
+    res.json(parseLLMResponse(r.choices[0]?.message?.content || "{}"));
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 export default app;

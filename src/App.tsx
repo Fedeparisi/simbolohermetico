@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   BookOpen, Film, Sparkles, Compass, Volume2, VolumeX,
   Pyramid, Hash, Star, Moon, Eye, Zap, ChevronLeft,
-  ChevronRight, Menu, X, BarChart3, Shield
+  ChevronRight, Menu, X, BarChart3, Shield, Brain
 } from "lucide-react";
 import { SYMBOLS_DATABASE, CATEGORIES, EsotericSymbol } from "./symbolsData";
 import { synthInstance } from "./utils/synth";
@@ -26,6 +26,8 @@ import { KundaliniView } from "./components/KundaliniView";
 import { RitualsView } from "./components/RitualsView";
 import { VisualizationView } from "./components/VisualizationView";
 import { MagicPathTest } from "./components/MagicPathTest";
+import { ArchetypeView } from "./components/ArchetypeView";
+import { Pathworking22View } from "./components/Pathworking22View";
 
 // Import existing views inline (they stay in App.tsx for now — refactor optional)
 import {
@@ -37,7 +39,7 @@ import {
 // ─── Navigation Configuration ─────────────────────────────────────────────
 type ViewId =
   | "library" | "oracle" | "cinema" | "books" | "pathworking"
-  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path";
+  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path" | "archetype" | "pathworking22";
 
 interface NavItem {
   id: ViewId;
@@ -70,6 +72,8 @@ const NAV_ITEMS: NavItem[] = [
   // Análisis Profundo
   { id: "dreams", label: "Análisis de Sueños", icon: <Eye className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "🔮", isNew: true },
   { id: "astrology", label: "Astrología", icon: <BarChart3 className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "📊", isNew: true },
+  { id: "archetype", label: "Arquetipos", icon: <Brain className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "🎭", isNew: true },
+  { id: "pathworking22", label: "Árbol de la Vida", icon: <Layers className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "🌳", isNew: true },
 ];
 
 const CATEGORIES_ORDER = ["📚 Estudio Hermético", "⚗️ Herramientas Mágicas", "🧘 Práctica Espiritual", "🔬 Análisis Profundo"];
@@ -324,6 +328,8 @@ export default function App() {
             {activeView === "rituals" && <RitualsView key="rituals" />}
             {activeView === "visualization" && <VisualizationView key="visualization" />}
             {activeView === "magic_path" && <MagicPathTest key="magic_path" />}
+            {activeView === "archetype" && <ArchetypeView key="archetype" />}
+            {activeView === "pathworking22" && <Pathworking22View key="pathworking22" />}
           </AnimatePresence>
         </main>
       </div>
