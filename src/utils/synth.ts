@@ -2,6 +2,9 @@
 export class CelestialSynth {
   private ctx: AudioContext | null = null;
   private isMuted: boolean = false;
+  private bowlIndex: number = 0;
+  // A beautiful, meditative pentatonic scale (D3, E3, G3, A3, B3, D4) for harmonic variation
+  private bowlScale: number[] = [146.83, 164.81, 196.00, 220.00, 246.94, 293.66];
 
   private initCtx() {
     if (!this.ctx) {
@@ -17,13 +20,8 @@ export class CelestialSynth {
   }
 
   playChime(freq: number = 220, duration: number = 3.0, type: "sine" | "triangle" = "sine") {
-    // Scale down high frequencies to a deep, meditative range (180Hz - 260Hz)
-    // and ensure a long decay of at least 3.0s, just like the tarot singing bowls.
-    let targetFreq = freq;
-    if (freq > 300) {
-      targetFreq = 180 + (freq % 80);
-    }
-    this.playBowl(targetFreq, Math.max(duration, 3.0));
+    // Simply trigger playBowl, which handles the soft, rolling scale logic automatically
+    this.playBowl(freq, Math.max(duration, 3.0));
   }
 
 
@@ -35,12 +33,16 @@ export class CelestialSynth {
       if (!this.ctx) return;
       const now = this.ctx.currentTime;
       
-      // Tibetan singing bowl partials: Fundamental + typical harmonics with long decay
+      // Select next note in our pentatonic scale to create a relaxing melody on sequential taps
+      const baseFreq = this.bowlScale[this.bowlIndex % this.bowlScale.length];
+      this.bowlIndex++;
+
+      // Soft meditative partials (Tibetan singing bowl harmonics) with longer, quieter gains
       const partials = [
-        { ratio: 1.0, gain: 0.12, decay: duration },
-        { ratio: 2.76, gain: 0.08, decay: duration * 0.85 },
-        { ratio: 5.4, gain: 0.05, decay: duration * 0.7 },
-        { ratio: 8.1, gain: 0.02, decay: duration * 0.5 }
+        { ratio: 1.0, gain: 0.07, decay: duration },
+        { ratio: 2.76, gain: 0.04, decay: duration * 0.85 },
+        { ratio: 5.4, gain: 0.02, decay: duration * 0.7 },
+        { ratio: 8.1, gain: 0.01, decay: duration * 0.5 }
       ];
 
       partials.forEach(partial => {
@@ -49,18 +51,18 @@ export class CelestialSynth {
         const gainNode = this.ctx.createGain();
         
         osc.type = "sine";
-        const targetFreq = freq * partial.ratio;
+        const targetFreq = baseFreq * partial.ratio;
         osc.frequency.setValueAtTime(targetFreq, now);
         
-        // Add a gentle vibrato (frequency modulation) to simulate the bowl's beating ring
-        osc.frequency.linearRampToValueAtTime(targetFreq + 1.5, now + 0.15);
-        osc.frequency.linearRampToValueAtTime(targetFreq - 1.5, now + 0.65);
-        osc.frequency.linearRampToValueAtTime(targetFreq, now + 1.5);
+        // Very gentle frequency modulation (vibrato) for organic warmth
+        osc.frequency.linearRampToValueAtTime(targetFreq + 1.0, now + 0.3);
+        osc.frequency.linearRampToValueAtTime(targetFreq - 1.0, now + 1.0);
+        osc.frequency.linearRampToValueAtTime(targetFreq, now + 2.0);
         
-        // Soft attack and slow exponential decay
-        gainNode.gain.setValueAtTime(0.001, now);
-        gainNode.gain.linearRampToValueAtTime(partial.gain, now + 0.12);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, now + partial.decay);
+        // Super soft progressive attack (fade-in) to eliminate sudden clicks/jumps
+        gainNode.gain.setValueAtTime(0.0001, now);
+        gainNode.gain.linearRampToValueAtTime(partial.gain, now + 0.45); // Smooth 450ms fade-in
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + partial.decay);
         
         osc.connect(gainNode);
         gainNode.connect(this.ctx.destination);
@@ -72,6 +74,7 @@ export class CelestialSynth {
       console.warn("Web Audio API singing bowl block", e);
     }
   }
+
 
 
   createHumer(freq: number = 136.1) {
