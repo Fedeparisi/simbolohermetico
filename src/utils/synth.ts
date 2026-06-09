@@ -16,10 +16,16 @@ export class CelestialSynth {
     this.isMuted = mute;
   }
 
-  playChime(freq: number = 294, duration: number = 2.0, type: "sine" | "triangle" = "sine") {
-    // Redirect to playBowl to give a rich singing bowl sound on all app interactions
-    this.playBowl(freq, duration);
+  playChime(freq: number = 220, duration: number = 3.0, type: "sine" | "triangle" = "sine") {
+    // Scale down high frequencies to a deep, meditative range (180Hz - 260Hz)
+    // and ensure a long decay of at least 3.0s, just like the tarot singing bowls.
+    let targetFreq = freq;
+    if (freq > 300) {
+      targetFreq = 180 + (freq % 80);
+    }
+    this.playBowl(targetFreq, Math.max(duration, 3.0));
   }
+
 
 
   playBowl(freq: number = 220, duration: number = 4.0) {
