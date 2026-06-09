@@ -4,31 +4,24 @@
  * Hermético 2.0 — Full Phase 1 Implementation
  */
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import {
-  BookOpen, Film, Sparkles, Compass, Volume2, VolumeX,
-  Pyramid, Hash, Star, Moon, Eye, Zap, ChevronLeft,
-  ChevronRight, Menu, X, BarChart3, Shield, Brain
-} from "lucide-react";
-import { SYMBOLS_DATABASE, CATEGORIES, EsotericSymbol } from "./symbolsData";
-import { synthInstance } from "./utils/synth";
-import { safeFetchJSON } from "./utils/api";
-import { GematriaView } from "./components/GematriaView";
-import { SigilView } from "./components/SigilView";
-import { TarotView } from "./components/TarotView";
-import { LunarView } from "./components/LunarView";
-import { DreamView } from "./components/DreamView";
-import { CorrespondencesView } from "./components/CorrespondencesView";
-import { AstrologyView } from "./components/AstrologyView";
-import { MeditationView } from "./components/MeditationView";
-import { KundaliniView } from "./components/KundaliniView";
-import { RitualsView } from "./components/RitualsView";
-import { VisualizationView } from "./components/VisualizationView";
-import { MagicPathTest } from "./components/MagicPathTest";
-import { ArchetypeView } from "./components/ArchetypeView";
-import { Pathworking22View } from "./components/Pathworking22View";
-import { MapaGeneticoCompleto } from "./components/MapaGeneticoCompleto";
+const GematriaView = React.lazy(() => import("./components/GematriaView").then(m => ({ default: m.GematriaView })));
+const SigilView = React.lazy(() => import("./components/SigilView").then(m => ({ default: m.SigilView })));
+const TarotView = React.lazy(() => import("./components/TarotView").then(m => ({ default: m.TarotView })));
+const LunarView = React.lazy(() => import("./components/LunarView").then(m => ({ default: m.LunarView })));
+const DreamView = React.lazy(() => import("./components/DreamView").then(m => ({ default: m.DreamView })));
+const CorrespondencesView = React.lazy(() => import("./components/CorrespondencesView").then(m => ({ default: m.CorrespondencesView })));
+const AstrologyView = React.lazy(() => import("./components/AstrologyView").then(m => ({ default: m.AstrologyView })));
+const MeditationView = React.lazy(() => import("./components/MeditationView").then(m => ({ default: m.MeditationView })));
+const KundaliniView = React.lazy(() => import("./components/KundaliniView").then(m => ({ default: m.KundaliniView })));
+const RitualsView = React.lazy(() => import("./components/RitualsView").then(m => ({ default: m.RitualsView })));
+const VisualizationView = React.lazy(() => import("./components/VisualizationView").then(m => ({ default: m.VisualizationView })));
+const MagicPathTest = React.lazy(() => import("./components/MagicPathTest").then(m => ({ default: m.MagicPathTest })));
+const ArchetypeView = React.lazy(() => import("./components/ArchetypeView").then(m => ({ default: m.ArchetypeView })));
+const Pathworking22View = React.lazy(() => import("./components/Pathworking22View").then(m => ({ default: m.Pathworking22View })));
+const MapaGeneticoCompleto = React.lazy(() => import("./components/MapaGeneticoCompleto").then(m => ({ default: m.MapaGeneticoCompleto })));
+const JournalView = React.lazy(() => import("./components/JournalView").then(m => ({ default: m.JournalView })));
+import ThemeToggle from "./components/ThemeToggle";
+import InstallPWA from "./components/InstallPWA";
 
 // Import existing views inline (they stay in App.tsx for now — refactor optional)
 import {
@@ -40,7 +33,7 @@ import {
 // ─── Navigation Configuration ─────────────────────────────────────────────
 type ViewId =
   | "library" | "oracle" | "cinema" | "books" | "pathworking"
-  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path" | "archetype" | "pathworking22" | "mapa_genetico";
+  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path" | "archetype" | "pathworking22" | "mapa_genetico" | "journal";
 
 interface NavItem {
   id: ViewId;
@@ -70,6 +63,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "rituals", label: "Rituales", icon: <Shield className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🛡️", isNew: true },
   { id: "visualization", label: "Visualización", icon: <Eye className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "💎", isNew: true },
   { id: "magic_path", label: "Test de Sendero", icon: <Compass className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🔌", isNew: true },
+  { id: "journal", label: "Diario", icon: <BookMarked className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "📖", isNew: true },
   // Análisis Profundo
   { id: "dreams", label: "Análisis de Sueños", icon: <Eye className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "🔮", isNew: true },
   { id: "astrology", label: "Astrología", icon: <BarChart3 className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "📊", isNew: true },
@@ -300,6 +294,8 @@ export default function App() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <span>DeepSeek AI</span>
             </div>
+            <InstallPWA />
+            <ThemeToggle />
             <button
               onClick={() => setIsAudioMuted(!isAudioMuted)}
               className="px-2.5 py-1.5 rounded-md border border-amber-500/20 bg-zinc-900/50 hover:bg-zinc-900 text-amber-100/80 transition-all flex items-center gap-1.5 text-xs"
@@ -312,28 +308,36 @@ export default function App() {
 
         {/* View content */}
         <main className="flex-1 p-4 md:p-6 overflow-auto">
-          <AnimatePresence mode="wait">
-            {activeView === "library" && <LibraryView key="library" />}
-            {activeView === "oracle" && <OracleView key="oracle" />}
-            {activeView === "cinema" && <CinemaView key="cinema" />}
-            {activeView === "books" && <BooksView key="books" />}
-            {activeView === "pathworking" && <PathworkingView key="pathworking" />}
-            {activeView === "gematria" && <GematriaView key="gematria" />}
-            {activeView === "sigil" && <SigilView key="sigil" />}
-            {activeView === "tarot" && <TarotView key="tarot" />}
-            {activeView === "lunar" && <LunarView key="lunar" />}
-            {activeView === "dreams" && <DreamView key="dreams" />}
-            {activeView === "correspondences" && <CorrespondencesView key="correspondences" />}
-            {activeView === "astrology" && <AstrologyView key="astrology" />}
-            {activeView === "meditations" && <MeditationView key="meditations" />}
-            {activeView === "kundalini" && <KundaliniView key="kundalini" />}
-            {activeView === "rituals" && <RitualsView key="rituals" />}
-            {activeView === "visualization" && <VisualizationView key="visualization" />}
-            {activeView === "magic_path" && <MagicPathTest key="magic_path" />}
-            {activeView === "archetype" && <ArchetypeView key="archetype" />}
-            {activeView === "pathworking22" && <Pathworking22View key="pathworking22" />}
-            {activeView === "mapa_genetico" && <MapaGeneticoCompleto key="mapa_genetico" />}
-          </AnimatePresence>
+          <React.Suspense fallback={
+            <div className="h-full flex flex-col items-center justify-center">
+              <div className="w-12 h-12 border-2 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
+              <p className="mt-4 text-xs tracking-widest uppercase text-amber-500/50 animate-pulse">Abriendo el portal...</p>
+            </div>
+          }>
+            <AnimatePresence mode="wait">
+              {activeView === "library" && <LibraryView key="library" />}
+              {activeView === "oracle" && <OracleView key="oracle" />}
+              {activeView === "cinema" && <CinemaView key="cinema" />}
+              {activeView === "books" && <BooksView key="books" />}
+              {activeView === "pathworking" && <PathworkingView key="pathworking" />}
+              {activeView === "gematria" && <GematriaView key="gematria" />}
+              {activeView === "sigil" && <SigilView key="sigil" />}
+              {activeView === "tarot" && <TarotView key="tarot" />}
+              {activeView === "lunar" && <LunarView key="lunar" />}
+              {activeView === "dreams" && <DreamView key="dreams" />}
+              {activeView === "correspondences" && <CorrespondencesView key="correspondences" />}
+              {activeView === "astrology" && <AstrologyView key="astrology" />}
+              {activeView === "meditations" && <MeditationView key="meditations" />}
+              {activeView === "kundalini" && <KundaliniView key="kundalini" />}
+              {activeView === "rituals" && <RitualsView key="rituals" />}
+              {activeView === "visualization" && <VisualizationView key="visualization" />}
+              {activeView === "magic_path" && <MagicPathTest key="magic_path" />}
+              {activeView === "archetype" && <ArchetypeView key="archetype" />}
+              {activeView === "pathworking22" && <Pathworking22View key="pathworking22" />}
+              {activeView === "mapa_genetico" && <MapaGeneticoCompleto key="mapa_genetico" />}
+              {activeView === "journal" && <JournalView key="journal" />}
+            </AnimatePresence>
+          </React.Suspense>
         </main>
       </div>
     </div>

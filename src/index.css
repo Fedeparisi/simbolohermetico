@@ -43,7 +43,29 @@ body {
   min-height: 100vh;
   font-size: 1rem; /* 16px base */
   line-height: 1.6;
+  transition: filter 0.5s ease, background-color 0.5s ease;
 }
+
+/* Light Theme via CSS Filter Inversion */
+html.theme-light {
+  filter: invert(1) hue-rotate(180deg);
+  background-color: #f6f6f4; /* Inverted 09090b */
+}
+html.theme-light img,
+html.theme-light video {
+  filter: invert(1) hue-rotate(180deg); /* Revert images back */
+}
+
+/* Sepia Theme (Parchment style) */
+html.theme-sepia {
+  filter: sepia(0.8) hue-rotate(350deg) brightness(1.2) contrast(0.95);
+  background-color: #1a1510; 
+}
+html.theme-sepia img,
+html.theme-sepia video {
+  filter: sepia(0) hue-rotate(0) brightness(1) contrast(1); /* Try to preserve images if possible, or leave them sepia */
+}
+
 
 /* ── Hardcoded pixel sizes — escalamos las usadas en los componentes ──────── */
 /* Los tamaños con [Xpx] no se ven afectados por @theme, así que los

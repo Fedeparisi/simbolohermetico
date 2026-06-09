@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Map, BookOpen, ChevronLeft, Send, Compass } from 'lucide-react';
 import { synthInstance } from '../utils/synth';
 import { safeFetchJSON } from '../utils/api';
+import { ExportPDFButton } from './ExportPDFButton';
 
 const zodiacSigns: Record<string, any> = {
   '01-20_02-18': { sign: 'Acuario', element: 'Aire', arcano: 'El Loco (0)', sefirah: 'Malkuth → Yesoid', lessons: ['Innovación', 'Libertad', 'Comunidad'] },
@@ -167,10 +168,13 @@ export function MapaGeneticoCompleto() {
           )}
 
           {currentModule === 'mapa' && (
-            <motion.div key="mapa" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-6">
-              <div className="border-b border-amber-500/10 pb-4">
-                <h2 className="text-lg font-bold font-serif text-amber-400">Mapa Genético Esotérico</h2>
-                <p className="text-xs text-amber-100/60">Introduce tu fecha de nacimiento para calcular tus regencias estelares.</p>
+            <motion.div key="mapa" id="pdf-mapa-genetico" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-6">
+              <div className="border-b border-amber-500/10 pb-4 flex justify-between items-start">
+                <div>
+                  <h2 className="text-lg font-bold font-serif text-amber-400">Mapa Genético Esotérico</h2>
+                  <p className="text-xs text-amber-100/60">Introduce tu fecha de nacimiento para calcular tus regencias estelares.</p>
+                </div>
+                {mapData && <ExportPDFButton targetId="pdf-mapa-genetico" filename="Mapa_Genetico_Hermetico.pdf" />}
               </div>
               <div className="flex gap-4">
                 <input 
