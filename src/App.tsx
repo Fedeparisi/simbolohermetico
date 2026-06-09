@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   BookOpen, Film, Sparkles, Compass, Volume2, VolumeX,
   Pyramid, Hash, Star, Moon, Eye, Zap, ChevronLeft,
-  ChevronRight, Menu, X, BarChart3
+  ChevronRight, Menu, X, BarChart3, Shield
 } from "lucide-react";
 import { SYMBOLS_DATABASE, CATEGORIES, EsotericSymbol } from "./symbolsData";
 import { synthInstance } from "./utils/synth";

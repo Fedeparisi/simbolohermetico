@@ -1,6 +1,6 @@
 export interface EsotericSymbol {
   id: string;
-  category: "fundamentales" | "sefirot" | "tarot" | "elementos" | "chakras" | "zodiaco" | "qlifot" | "adicionales";
+  category: string;
   name: string;
   emoji: string;
   association: string;
@@ -1173,7 +1173,7 @@ export const CATEGORIES = [
   { id: "adicionales", name: "Símbolos Adicionales", emoji: "🗝️", desc: "Sellos, llaves rituales y cosmogramas mágicos." }
 ];
 
-export const SYMBOLS_DATABASE: EsotericSymbol[] = [
+export const SYMBOLS_DATABASE: any[] = [
   {
     id: "symbol_new_0_1",
     category: "alquimia_y_filosof_a_0",
