@@ -21,6 +21,7 @@ import { LunarView } from "./components/LunarView";
 import { DreamView } from "./components/DreamView";
 import { CorrespondencesView } from "./components/CorrespondencesView";
 import { AstrologyView } from "./components/AstrologyView";
+import { MeditationView } from "./components/MeditationView";
 
 // Import existing views inline (they stay in App.tsx for now — refactor optional)
 import {
@@ -32,7 +33,7 @@ import {
 // ─── Navigation Configuration ─────────────────────────────────────────────
 type ViewId =
   | "library" | "oracle" | "cinema" | "books" | "pathworking"
-  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology";
+  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations";
 
 interface NavItem {
   id: ViewId;
@@ -57,6 +58,7 @@ const NAV_ITEMS: NavItem[] = [
   // Práctica Espiritual
   { id: "pathworking", label: "Viaje Astral", icon: <Compass className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🌌" },
   { id: "lunar", label: "Calendario Lunar", icon: <Moon className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🌙", isNew: true },
+  { id: "meditations", label: "Meditaciones", icon: <Waves className="w-4 h-4" />, category: "🧘 Práctica Espiritual", emoji: "🧘", isNew: true },
   // Análisis Profundo
   { id: "dreams", label: "Análisis de Sueños", icon: <Eye className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "🔮", isNew: true },
   { id: "astrology", label: "Astrología", icon: <BarChart3 className="w-4 h-4" />, category: "🔬 Análisis Profundo", emoji: "📊", isNew: true },
@@ -309,6 +311,7 @@ export default function App() {
             {activeView === "dreams" && <DreamView key="dreams" />}
             {activeView === "correspondences" && <CorrespondencesView key="correspondences" />}
             {activeView === "astrology" && <AstrologyView key="astrology" />}
+            {activeView === "meditations" && <MeditationView key="meditations" />}
           </AnimatePresence>
         </main>
       </div>
