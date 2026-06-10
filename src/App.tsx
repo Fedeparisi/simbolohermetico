@@ -438,59 +438,59 @@ function LibraryView() {
       <div className="lg:col-span-8">
         {activeSymbol ? (
           <div className="flex flex-col gap-6">
-            <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/25 shadow-xl flex flex-col gap-5 relative overflow-hidden">
+            <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-4 sm:p-6 rounded-2xl border border-amber-500/25 shadow-xl flex flex-col gap-4 sm:gap-5 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full filter blur-xl pointer-events-none" />
-              <div className="flex justify-between items-start border-b border-amber-500/10 pb-4">
-                <div className="flex gap-4 items-center">
-                  <div className="text-4xl bg-zinc-900 border border-amber-500/20 w-16 h-16 rounded-xl flex items-center justify-center shadow-lg">{activeSymbol.emoji}</div>
+              <div className="flex flex-col md:flex-row md:justify-between md:items-center border-b border-amber-500/10 pb-4 gap-4">
+                <div className="flex gap-3 items-center">
+                  <div className="text-2xl sm:text-4xl bg-zinc-900 border border-amber-500/20 w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center shadow-lg shrink-0">{activeSymbol.emoji}</div>
                   <div>
-                    <h2 className="text-xl font-bold font-serif text-amber-400">{activeSymbol.name}{activeSymbol.gematria && <span className="text-xs text-amber-200/50 font-sans ml-2">({activeSymbol.gematria})</span>}</h2>
-                    <p className="text-xs text-amber-100/60">{activeSymbol.association}</p>
-                    <p className="text-[10px] mt-1 uppercase text-amber-500/50 tracking-widest bg-amber-500/5 px-2 py-0.5 rounded inline-block">{CATEGORIES.find(c => c.id === activeSymbol.category)?.name}</p>
+                    <h2 className="text-base sm:text-xl font-bold font-serif text-amber-400">{activeSymbol.name}{activeSymbol.gematria && <span className="text-xs text-amber-200/50 font-sans ml-2">({activeSymbol.gematria})</span>}</h2>
+                    <p className="text-[11px] sm:text-xs text-amber-100/60 leading-tight">{activeSymbol.association}</p>
+                    <p className="text-[9px] sm:text-[10px] mt-1 uppercase text-amber-500/50 tracking-widest bg-amber-500/5 px-2 py-0.5 rounded inline-block">{CATEGORIES.find(c => c.id === activeSymbol.category)?.name}</p>
                   </div>
                 </div>
                 {/* Depth selector — smaller compact buttons */}
-                <div className="flex gap-2 mt-2">
+                <div className="flex gap-1.5 w-full md:w-auto">
                   <button
                     onClick={() => { setDepth("beginner"); synthInstance.playChime(220, 0.7); }}
-                    className={`flex-1 flex flex-col items-center gap-0.5 py-1.5 px-2 rounded-lg border transition-all ${
+                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-1.5 px-2.5 rounded-lg border transition-all ${
                       depth === "beginner"
                         ? "bg-emerald-500/15 border-emerald-500/60 text-emerald-300 shadow-lg shadow-emerald-500/10"
                         : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
                     }`}
                   >
-                    <span className="text-lg">🌱</span>
-                    <span className="text-xs font-bold uppercase tracking-wide">Principiante</span>
-                    <span className="text-[10px] text-current opacity-60 hidden sm:block">Neófito</span>
+                    <span className="text-base sm:text-lg">🌱</span>
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wide">Principiante</span>
+                    <span className="text-[10px] text-current opacity-60 hidden md:block">Neófito</span>
                   </button>
                   <button
                     onClick={() => { setDepth("intermediate"); synthInstance.playChime(330, 0.7); }}
-                    className={`flex-1 flex flex-col items-center gap-0.5 py-1.5 px-2 rounded-lg border transition-all ${
+                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-1.5 px-2.5 rounded-lg border transition-all ${
                       depth === "intermediate"
                         ? "bg-amber-500/15 border-amber-500/60 text-amber-300 shadow-lg shadow-amber-500/10"
                         : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
                     }`}
                   >
-                    <span className="text-lg">🌿</span>
-                    <span className="text-xs font-bold uppercase tracking-wide">Intermedio</span>
-                    <span className="text-[10px] text-current opacity-60 hidden sm:block">Practicante</span>
+                    <span className="text-base sm:text-lg">🌿</span>
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wide">Intermedio</span>
+                    <span className="text-[10px] text-current opacity-60 hidden md:block">Practicante</span>
                   </button>
                   <button
                     onClick={() => { setDepth("advanced"); synthInstance.playChime(440, 0.7); }}
-                    className={`flex-1 flex flex-col items-center gap-0.5 py-1.5 px-2 rounded-lg border transition-all ${
+                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-1.5 px-2.5 rounded-lg border transition-all ${
                       depth === "advanced"
                         ? "bg-purple-500/15 border-purple-500/60 text-purple-300 shadow-lg shadow-purple-500/10"
                         : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
                     }`}
                   >
-                    <span className="text-lg">🌳</span>
-                    <span className="text-xs font-bold uppercase tracking-wide">Avanzado</span>
-                    <span className="text-[10px] text-current opacity-60 hidden sm:block">Iniciado</span>
+                    <span className="text-base sm:text-lg">🌳</span>
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wide">Avanzado</span>
+                    <span className="text-[10px] text-current opacity-60 hidden md:block">Iniciado</span>
                   </button>
                 </div>
               </div>
               {/* Content area — smaller text, more padding */}
-              <div className="flex flex-col gap-4 text-sm leading-relaxed text-amber-100/90 font-serif min-h-[160px] p-5 bg-zinc-900/30 rounded-xl border border-amber-500/5">
+              <div className="flex flex-col gap-4 text-sm leading-relaxed text-amber-100/90 font-serif min-h-[160px] p-4 sm:p-5 bg-zinc-900/30 rounded-xl border border-amber-500/5">
                 {depth === "beginner" && (
                   <div className="space-y-3">
                     <p className="font-sans italic text-emerald-400/80 border-l-2 border-emerald-500/40 pl-3 text-sm flex items-center gap-2">🌱 Acceso básico — Neófito</p>
