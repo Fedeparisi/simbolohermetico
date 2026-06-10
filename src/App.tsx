@@ -450,41 +450,41 @@ function LibraryView() {
                   </div>
                 </div>
                 {/* Depth selector — smaller compact buttons */}
-                <div className="flex gap-1.5 w-full md:w-auto">
+                <div className="flex flex-col md:flex-row gap-1.5 w-full md:w-auto">
                   <button
                     onClick={() => { setDepth("beginner"); synthInstance.playChime(220, 0.7); }}
-                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-1.5 px-2.5 rounded-lg border transition-all ${
+                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-2 px-3 rounded-lg border transition-all ${
                       depth === "beginner"
                         ? "bg-emerald-500/15 border-emerald-500/60 text-emerald-300 shadow-lg shadow-emerald-500/10"
                         : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
                     }`}
                   >
                     <span className="text-base sm:text-lg">🌱</span>
-                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wide">Principiante</span>
+                    <span className="text-xs font-bold uppercase tracking-wide">Principiante</span>
                     <span className="text-[10px] text-current opacity-60 hidden md:block">Neófito</span>
                   </button>
                   <button
                     onClick={() => { setDepth("intermediate"); synthInstance.playChime(330, 0.7); }}
-                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-1.5 px-2.5 rounded-lg border transition-all ${
+                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-2 px-3 rounded-lg border transition-all ${
                       depth === "intermediate"
                         ? "bg-amber-500/15 border-amber-500/60 text-amber-300 shadow-lg shadow-amber-500/10"
                         : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
                     }`}
                   >
                     <span className="text-base sm:text-lg">🌿</span>
-                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wide">Intermedio</span>
+                    <span className="text-xs font-bold uppercase tracking-wide">Intermedio</span>
                     <span className="text-[10px] text-current opacity-60 hidden md:block">Practicante</span>
                   </button>
                   <button
                     onClick={() => { setDepth("advanced"); synthInstance.playChime(440, 0.7); }}
-                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-1.5 px-2.5 rounded-lg border transition-all ${
+                    className={`flex-1 md:flex-none flex items-center justify-center md:flex-col gap-1.5 md:gap-0.5 py-2 px-3 rounded-lg border transition-all ${
                       depth === "advanced"
                         ? "bg-purple-500/15 border-purple-500/60 text-purple-300 shadow-lg shadow-purple-500/10"
                         : "bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
                     }`}
                   >
                     <span className="text-base sm:text-lg">🌳</span>
-                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wide">Avanzado</span>
+                    <span className="text-xs font-bold uppercase tracking-wide">Avanzado</span>
                     <span className="text-[10px] text-current opacity-60 hidden md:block">Iniciado</span>
                   </button>
                 </div>
