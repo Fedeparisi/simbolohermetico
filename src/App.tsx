@@ -287,9 +287,10 @@ export default function App() {
           {isMobile && (
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="p-2 rounded-lg border border-amber-500/20 text-amber-400 hover:bg-amber-500/10 transition-all"
+              className="p-3 rounded-full border border-amber-500/30 text-amber-400 bg-zinc-900/60 hover:bg-amber-500/10 transition-all flex items-center justify-center shadow-md shadow-amber-500/5 shrink-0"
+              aria-label="Abrir menú"
             >
-              <Menu className="w-4 h-4" />
+              <Menu className="w-6 h-6" />
             </button>
           )}
           <div className="flex items-center gap-2 flex-1 min-w-0">
