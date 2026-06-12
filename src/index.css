@@ -10,9 +10,31 @@
    text-xl:  20px → 22px
    ────────────────────────────────────────────────────────────────────────── */
 @theme {
-  --font-serif: 'IM Fell English', Georgia, serif;
+  --font-serif: 'Playfair Display', serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
+
+  /* STITCH Custom Colors */
+  --color-primary: #c0c1ff;
+  --color-secondary: #5de6ff;
+  --color-tertiary: #ffafd3;
+  --color-electric-cyan: #06B6D4;
+  --color-indigo-glow: #818CF8;
+  --color-border-glass: rgba(255, 255, 255, 0.1);
+  --color-surface-glass: rgba(30, 41, 59, 0.5);
+  --color-background: #0b1326;
+  --color-on-background: #dae2fd;
+
+  /* Legacy aliases mapped to STITCH */
+  --color-obsidian-base: #0b1326;
+  --color-surface: #0b1326;
+  --color-surface-container: #171f33;
+  --color-on-surface: #dae2fd;
+  --color-alchemical-gold: #06B6D4;
+  --color-mystical-violet: #818CF8;
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-charcoal-surface: rgba(30, 41, 59, 0.5);
+  --color-on-surface-variant: #c7c4d7;
 
   /* Reescalamos la tipografía completa */
   --text-xs:   0.875rem;   /* 14px  (antes 12px) */
@@ -22,28 +44,40 @@
   --text-xl:   1.375rem;   /* 22px  (antes 20px) */
   --text-2xl:  1.625rem;   /* 26px  (antes 24px) */
   --text-3xl:  1.875rem;   /* 30px  (antes 30px) */
+
+  /* Deep Cosmic Blue Overrides for Zinc classes (Global changes) */
+  --color-zinc-950: #080d1a;
+  --color-zinc-900: #0f1629;
+  --color-zinc-800: #1d283c;
+  --color-zinc-600: #718096;
+  --color-zinc-500: #8a9ba8;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --gold: #f59e0b;
-  --gold-dim: rgba(245,158,11,0.15);
-  --ink: #09090b;
-  --parchment: #fef3c7;
-  font-family: 'Inter', system-ui, sans-serif;
+  --gold: #06B6D4;
+  --gold-dim: rgba(6, 182, 212, 0.15);
+  --ink: #0b1326;
+  --parchment: #dae2fd;
+  font-family: 'Hanken Grotesk', system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
 body {
-  background-color: #09090b;
-  color: #fef3c7;
-  min-height: 100vh;
+  background-color: #0b1326;
+  color: #dae2fd;
+  min-height: max(884px, 100vh);
   font-size: 1rem; /* 16px base */
   line-height: 1.6;
   transition: filter 0.5s ease, background-color 0.5s ease;
+}
+
+::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: white;
 }
 
 /* Light Theme via CSS Filter Inversion */
@@ -112,6 +146,11 @@ input, select, textarea, button {
   outline: 1px solid rgba(245, 158, 11, 0.5);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 0.2; }
 }
 
 /* Google Fonts — cargado via <link> en index.html */

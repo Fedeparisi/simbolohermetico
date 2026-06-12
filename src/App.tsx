@@ -34,6 +34,7 @@ const MapaGeneticoCompleto = React.lazy(() => import("./components/MapaGeneticoC
 const JournalView = React.lazy(() => import("./components/JournalView").then(m => ({ default: m.JournalView })));
 import ThemeToggle from "./components/ThemeToggle";
 import InstallPWA from "./components/InstallPWA";
+import { ShaderBackground } from "./components/ShaderBackground";
 
 // Import existing views inline (they stay in App.tsx for now — refactor optional)
 import {
@@ -111,32 +112,32 @@ function Sidebar({
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full">
-      {/* Logo */}
-      <div className={`flex items-center gap-3 p-4 border-b border-amber-500/10 ${collapsed && !isMobile ? "justify-center" : ""}`}>
-        <div className="w-8 h-8 rounded-lg border border-amber-500/30 flex items-center justify-center bg-zinc-900 shadow-md shadow-amber-500/10 shrink-0">
-          <Pyramid className="w-4 h-4 text-amber-500 animate-pulse" />
+    <div className="flex flex-col h-full bg-charcoal-surface">
+      {/* Brand Header */}
+      <div className={`px-4 py-6 flex items-center space-x-3 border-b border-glass-border ${collapsed && !isMobile ? "justify-center" : ""}`}>
+        <div className="w-10 h-10 rounded-full bg-obsidian-base border border-alchemical-gold flex items-center justify-center overflow-hidden shrink-0">
+          <span className="material-symbols-outlined text-alchemical-gold animate-pulse text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
         </div>
         {(!collapsed || isMobile) && (
           <div className="overflow-hidden">
-            <div className="text-xs font-bold tracking-widest text-amber-500 uppercase font-serif whitespace-nowrap">
-              Decodificador
-            </div>
-            <div className="text-[9px] text-amber-100/40 uppercase tracking-wider whitespace-nowrap">
-              Hermético 2.0
-            </div>
+            <h2 className="text-sm font-bold tracking-wider text-alchemical-gold font-serif whitespace-nowrap">
+              Símbolo Hermético
+            </h2>
+            <p className="text-[10px] text-on-surface-variant opacity-70 uppercase tracking-widest whitespace-nowrap">
+              Seeker of Wisdom
+            </p>
           </div>
         )}
         {!isMobile && (
           <button
             onClick={onToggle}
-            className="ml-auto p-1 rounded-md hover:bg-amber-500/10 text-amber-500/50 hover:text-amber-400 transition-all shrink-0"
+            className="ml-auto p-1 rounded-md hover:bg-alchemical-gold/10 text-alchemical-gold/50 hover:text-alchemical-gold transition-all shrink-0"
           >
             {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
           </button>
         )}
         {isMobile && (
-          <button onClick={onMobileClose} className="ml-auto p-1 text-zinc-400 hover:text-amber-400">
+          <button onClick={onMobileClose} className="ml-auto p-1 text-zinc-400 hover:text-alchemical-gold">
             <X className="w-4 h-4" />
           </button>
         )}
@@ -149,7 +150,7 @@ function Sidebar({
           return (
             <div key={cat}>
               {(!collapsed || isMobile) && (
-                <div className="text-[9px] text-amber-500/40 uppercase tracking-widest px-2 mb-1.5 font-mono">{cat}</div>
+                <div className="text-[9px] text-alchemical-gold/40 uppercase tracking-widest px-2 mb-1.5 font-mono">{cat}</div>
               )}
               <div className="flex flex-col gap-0.5">
                 {items.map(item => (
@@ -157,13 +158,13 @@ function Sidebar({
                     key={item.id}
                     onClick={() => handleNav(item.id)}
                     title={collapsed && !isMobile ? item.label : undefined}
-                    className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-all text-xs font-semibold relative ${
+                    className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-all text-xs font-semibold relative border border-transparent ${
                       activeView === item.id
-                        ? "bg-amber-500/15 border border-amber-500/30 text-amber-300"
-                        : "text-zinc-400 hover:text-amber-200 hover:bg-zinc-900/60 border border-transparent"
+                        ? "bg-alchemical-gold/10 border-alchemical-gold/30 text-alchemical-gold"
+                        : "text-on-surface-variant/70 hover:text-on-surface hover:bg-obsidian-base/50"
                     } ${collapsed && !isMobile ? "justify-center" : ""}`}
                   >
-                    <span className={`shrink-0 ${activeView === item.id ? "text-amber-400" : ""}`}>
+                    <span className={`shrink-0 ${activeView === item.id ? "text-alchemical-gold" : ""}`}>
                       {collapsed && !isMobile ? (
                         <span className="text-base">{item.emoji}</span>
                       ) : item.icon}
@@ -172,7 +173,7 @@ function Sidebar({
                       <>
                         <span className="truncate">{item.label}</span>
                         {item.isNew && (
-                          <span className="ml-auto text-[8px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">
+                          <span className="ml-auto text-[8px] bg-alchemical-gold/20 text-alchemical-gold px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0 font-sans">
                             Nuevo
                           </span>
                         )}
@@ -181,7 +182,7 @@ function Sidebar({
                     {activeView === item.id && (
                       <motion.div
                         layoutId="sidebar-active"
-                        className="absolute left-0 top-1 bottom-1 w-0.5 bg-amber-500 rounded-full"
+                        className="absolute left-0 top-1 bottom-1 w-0.5 bg-alchemical-gold rounded-full"
                       />
                     )}
                   </button>
@@ -194,8 +195,8 @@ function Sidebar({
 
       {/* Footer */}
       {(!collapsed || isMobile) && (
-        <div className="p-3 border-t border-amber-500/10">
-          <p className="text-[9px] text-amber-500/30 font-serif italic text-center">
+        <div className="p-3 border-t border-glass-border">
+          <p className="text-[9px] text-alchemical-gold/30 font-serif italic text-center">
             "Como es arriba, es abajo"
           </p>
         </div>
@@ -220,7 +221,7 @@ function Sidebar({
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-64 bg-zinc-950 border-r border-amber-500/10 z-50 shadow-2xl"
+              className="fixed left-0 top-0 bottom-0 w-64 bg-charcoal-surface border-r border-glass-border z-50 shadow-2xl"
             >
               {sidebarContent}
             </motion.aside>
@@ -234,7 +235,7 @@ function Sidebar({
     <motion.aside
       animate={{ width: collapsed ? 56 : 220 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="h-screen sticky top-0 bg-zinc-950 border-r border-amber-500/10 shrink-0 overflow-hidden z-30"
+      className="h-screen sticky top-0 bg-charcoal-surface border-r border-glass-border shrink-0 overflow-hidden z-30"
     >
       {sidebarContent}
     </motion.aside>
@@ -262,12 +263,26 @@ export default function App() {
 
   const currentNav = NAV_ITEMS.find(n => n.id === activeView);
 
+  let bgImage = "";
+  if (currentNav?.category === "📚 Estudio Hermético") bgImage = "/bg_estudio.png";
+  else if (currentNav?.category === "⚗️ Herramientas Mágicas") bgImage = activeView === "gematria" ? "/gematria_bg.png" : "/bg_herramientas.png";
+  else if (currentNav?.category === "🧘 Práctica Espiritual") bgImage = "/bg_practica.png";
+  else if (currentNav?.category === "🔬 Análisis Profundo") bgImage = "/bg_analisis.png";
+
   return (
-    <div className="min-h-screen bg-zinc-950 text-amber-50 flex selection:bg-amber-500/30 selection:text-amber-200">
-      {/* Background gradients */}
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(120,80,24,0.10),transparent_60%)] pointer-events-none z-0" />
-      <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-amber-500/4 rounded-full filter blur-[100px] pointer-events-none z-0" />
-      <div className="fixed bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/4 rounded-full filter blur-[100px] pointer-events-none z-0" />
+    <div className="min-h-screen bg-obsidian-base text-on-surface flex selection:bg-alchemical-gold/30 selection:text-alchemical-gold relative overflow-hidden">
+      {/* STITCH Ambient Background Glows */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[150vw] h-[442px] bg-indigo-glow/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      <div className="fixed bottom-0 right-0 w-[80vw] h-[530px] bg-electric-cyan/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+      {/* Category Background Image */}
+      {bgImage && (
+        <div 
+          key={bgImage}
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none mix-blend-screen animate-[fadeIn_1s_ease-in-out] z-0"
+          style={{ backgroundImage: `url('${bgImage}')` }}
+        />
+      )}
 
       {/* Sidebar */}
       <Sidebar
@@ -283,27 +298,27 @@ export default function App() {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen min-w-0 relative z-10">
         {/* Top bar */}
-        <header className="sticky top-0 z-20 bg-zinc-950/90 backdrop-blur-md border-b border-amber-500/10 px-4 md:px-6 py-3 flex items-center gap-3">
+        <header className="sticky top-0 z-20 bg-charcoal-surface backdrop-blur-xl border-b border-glass-border px-4 md:px-6 py-2 flex items-center gap-3 h-12">
           {isMobile && (
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="p-3 rounded-full border border-amber-500/30 text-amber-400 bg-zinc-900/60 hover:bg-amber-500/10 transition-all flex items-center justify-center shadow-md shadow-amber-500/5 shrink-0"
+              className="p-1.5 rounded-md border border-glass-border text-alchemical-gold bg-charcoal-surface/60 hover:bg-alchemical-gold/10 transition-all flex items-center justify-center shrink-0"
               aria-label="Abrir menú"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-4 h-4" />
             </button>
           )}
-          <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
             <span className="text-lg">{currentNav?.emoji}</span>
-            <h1 className="text-sm font-bold font-serif text-amber-400 truncate">{currentNav?.label}</h1>
+            <h1 className="text-sm font-bold font-serif text-alchemical-gold truncate">{currentNav?.label}</h1>
             {currentNav?.isNew && (
-              <span className="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">
+              <span className="text-[9px] bg-alchemical-gold/20 text-alchemical-gold px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0 font-sans">
                 Nuevo
               </span>
             )}
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <div className="hidden sm:flex px-2.5 py-1.5 rounded-md border border-amber-500/10 bg-zinc-900/30 text-[10px] text-amber-200/50 items-center gap-1.5">
+            <div className="hidden sm:flex px-2.5 py-1.5 rounded-md border border-glass-border bg-charcoal-surface/40 text-[10px] text-on-surface-variant/70 items-center gap-1.5 font-mono">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <span>DeepSeek AI</span>
             </div>
@@ -311,10 +326,10 @@ export default function App() {
             <ThemeToggle />
             <button
               onClick={() => setIsAudioMuted(!isAudioMuted)}
-              className="px-2.5 py-1.5 rounded-md border border-amber-500/20 bg-zinc-900/50 hover:bg-zinc-900 text-amber-100/80 transition-all flex items-center gap-1.5 text-xs"
+              className="px-2.5 py-1.5 rounded-md border border-glass-border bg-charcoal-surface/50 hover:bg-charcoal-surface text-on-surface transition-all flex items-center gap-1.5 text-xs"
               title={isAudioMuted ? "Activar audio ritual" : "Silenciar"}
             >
-              {isAudioMuted ? <VolumeX className="w-3.5 h-3.5 text-zinc-400" /> : <Volume2 className="w-3.5 h-3.5 text-amber-500" />}
+              {isAudioMuted ? <VolumeX className="w-3.5 h-3.5 text-zinc-400" /> : <Volume2 className="w-3.5 h-3.5 text-alchemical-gold" />}
             </button>
           </div>
         </header>
@@ -394,9 +409,11 @@ function LibraryView() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       <div className="lg:col-span-4 flex flex-col gap-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500/50 w-4 h-4" />
-          <input type="text" placeholder="Filtrar símbolos, claves..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full bg-zinc-900 border border-amber-500/20 rounded-lg py-2.5 pl-10 pr-4 text-xs text-amber-100 placeholder-zinc-500 focus:outline-none focus:border-amber-400" />
-          {searchTerm && <button onClick={() => setSearchTerm("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-amber-400"><X className="w-4 h-4" /></button>}
+          <input type="text" placeholder="Filtrar símbolos, claves..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full bg-zinc-900 border border-amber-500/20 rounded-lg py-2.5 pl-4 pr-12 text-xs text-amber-100 placeholder-zinc-500 focus:outline-none focus:border-amber-400" />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+            {searchTerm && <button onClick={() => setSearchTerm("")} className="text-zinc-400 hover:text-amber-400"><X className="w-4 h-4" /></button>}
+            <Search className="text-amber-500/50 w-4 h-4" />
+          </div>
         </div>
         <div className="relative z-20">
           <button onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)} className="w-full flex items-center justify-between px-4 py-2.5 bg-zinc-900/80 border border-amber-500/20 text-amber-300 rounded-lg text-xs font-semibold hover:bg-zinc-900 transition-all">
@@ -425,8 +442,8 @@ function LibraryView() {
           <div className="text-[10px] text-amber-100/40 uppercase tracking-widest px-2 py-1 mb-1 border-b border-zinc-800/50 pb-1.5 flex justify-between">
             <span>Símbolos ({filteredSymbols.length})</span><span className="text-amber-500/40">7 Categorías</span>
           </div>
-          {filteredSymbols.map(sym => (
-            <button key={sym.id} onClick={() => { setActiveSymbol(sym); setAiResult(null); synthInstance.playChime(330, 0.4); }} className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between transition-all ${activeSymbol?.id === sym.id ? "bg-amber-500/10 border border-amber-500/30 text-amber-200" : "border border-transparent text-zinc-400 hover:bg-zinc-900/50 hover:text-amber-100/90"}`}>
+          {filteredSymbols.map((sym, index) => (
+            <button key={`${sym.id}-${index}`} onClick={() => { setActiveSymbol(sym); setAiResult(null); synthInstance.playChime(330, 0.4); }} className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between transition-all ${activeSymbol?.id === sym.id ? "bg-amber-500/10 border border-amber-500/30 text-amber-200" : "border border-transparent text-zinc-400 hover:bg-zinc-900/50 hover:text-amber-100/90"}`}>
               <div className="flex items-center gap-2.5"><span className="text-lg">{sym.emoji}</span><div><div className="text-xs font-semibold">{sym.name}</div><div className="text-[10px] opacity-60 truncate max-w-[190px]">{sym.association}</div></div></div>
               <ChevronRight className={`w-3.5 h-3.5 opacity-50 transition-transform ${activeSymbol?.id === sym.id ? "rotate-90 text-amber-400" : ""}`} />
             </button>
@@ -438,7 +455,7 @@ function LibraryView() {
       <div className="lg:col-span-8">
         {activeSymbol ? (
           <div className="flex flex-col gap-6">
-            <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-4 sm:p-6 rounded-2xl border border-amber-500/25 shadow-xl flex flex-col gap-4 sm:gap-5 relative overflow-hidden">
+            <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 md:p-8 rounded-2xl border border-amber-500/25 shadow-xl flex flex-col gap-4 sm:gap-5 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full filter blur-xl pointer-events-none" />
               <div className="flex flex-col md:flex-row md:justify-between md:items-center border-b border-amber-500/10 pb-4 gap-4">
                 <div className="flex gap-3 items-center">
@@ -490,24 +507,24 @@ function LibraryView() {
                 </div>
               </div>
               {/* Content area — smaller text, more padding */}
-              <div className="flex flex-col gap-4 text-sm leading-relaxed text-amber-100/90 font-serif min-h-[160px] p-4 sm:p-5 bg-zinc-900/30 rounded-xl border border-amber-500/5">
+              <div className="flex flex-col gap-4 text-sm leading-relaxed text-amber-100/90 font-serif min-h-[160px] px-8 py-6 md:px-12 bg-zinc-900/30 rounded-xl border border-amber-500/5">
                 {depth === "beginner" && (
                   <div className="space-y-3">
-                    <p className="font-sans italic text-emerald-400/80 border-l-2 border-emerald-500/40 pl-3 text-sm flex items-center gap-2">🌱 Acceso básico — Neófito</p>
-                    <p className="text-justify font-sans text-sm leading-relaxed">{activeSymbol.beginner}</p>
+                    <p className="font-sans italic text-emerald-400/80 border-l-2 border-emerald-500/40 pl-3 text-sm flex items-center gap-2" style={{ marginLeft: '1.5rem' }}>🌱 Acceso básico — Neófito</p>
+                    <p className="text-justify font-sans text-sm leading-relaxed" style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>{activeSymbol.beginner}</p>
                   </div>
                 )}
                 {depth === "intermediate" && (
                   <div className="space-y-3">
-                    <p className="font-sans italic text-amber-400/80 border-l-2 border-amber-500/40 pl-3 text-sm flex items-center gap-2">🌿 Correspondencias — Cábala, Tarot y Alquimia</p>
-                    <p className="text-justify font-sans text-sm leading-relaxed">{activeSymbol.intermediate}</p>
+                    <p className="font-sans italic text-amber-400/80 border-l-2 border-amber-500/40 pl-3 text-sm flex items-center gap-2" style={{ marginLeft: '1.5rem' }}>🌿 Correspondencias — Cábala, Tarot y Alquimia</p>
+                    <p className="text-justify font-sans text-sm leading-relaxed" style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>{activeSymbol.intermediate}</p>
                   </div>
                 )}
                 {depth === "advanced" && (
                   <div className="space-y-4">
-                    <p className="font-sans italic text-purple-400/80 border-l-2 border-purple-500/40 pl-3 text-sm flex items-center gap-2">🌳 Teúrgia ceremonial — Ritual operativo</p>
-                    <p className="text-justify font-sans text-sm leading-relaxed">{activeSymbol.advanced}</p>
-                    <div className="p-4 bg-amber-500/5 border border-amber-500/15 rounded-xl text-sm text-amber-200 font-sans">
+                    <p className="font-sans italic text-purple-400/80 border-l-2 border-purple-500/40 pl-3 text-sm flex items-center gap-2" style={{ marginLeft: '1.5rem' }}>🌳 Teúrgia ceremonial — Ritual operativo</p>
+                    <p className="text-justify font-sans text-sm leading-relaxed" style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>{activeSymbol.advanced}</p>
+                    <div className="p-4 bg-amber-500/5 border border-amber-500/15 rounded-xl text-sm text-amber-200 font-sans" style={{ marginLeft: '1.5rem', marginRight: '1.5rem' }}>
                       <strong className="text-amber-500 uppercase tracking-wider block mb-2">⚠️ Advertencia Iniciática:</strong>
                       Las prácticas ceremoniales requieren quietud mental y protección astral previa.
                     </div>

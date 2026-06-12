@@ -151,10 +151,10 @@ export function GematriaView() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="max-w-4xl mx-auto flex flex-col gap-6"
+      className="max-w-4xl mx-auto flex flex-col gap-6 relative"
     >
       {/* Header */}
-      <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/20 shadow-xl flex flex-col gap-5">
+      <div className="relative z-10 bg-surface-glass backdrop-blur-xl p-6 rounded-2xl border border-border-glass shadow-xl flex flex-col gap-5">
         <div className="flex items-center gap-3 border-b border-amber-500/10 pb-4">
           <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-xl">✡️</div>
           <div>
