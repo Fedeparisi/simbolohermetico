@@ -253,7 +253,7 @@ export function ArchetypeView() {
   const progressPercent = (currentIdx / QUESTIONS.length) * 100;
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div className="max-w-[calc(100%-2cm)] mx-auto flex flex-col gap-6">
       <AnimatePresence mode="wait">
         {!isFinished ? (
           <motion.div
