@@ -151,7 +151,7 @@ export function GematriaView() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6 relative"
+      className="w-full max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6 relative"
     >
       {/* Header */}
       <div className="relative z-10 bg-surface-glass backdrop-blur-xl p-6 rounded-2xl border border-border-glass shadow-xl flex flex-col gap-5">

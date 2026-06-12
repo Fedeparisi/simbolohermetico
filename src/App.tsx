@@ -571,7 +571,7 @@ function OracleView() {
     try { const data = await safeFetchJSON("/api/decode", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ term, context }) }, "La sabiduría celeste se opone."); setResult(data); synthInstance.playChime(523.25, 2.0, "sine"); } catch (err: any) { setErrorStr(err.message); } finally { setLoading(false); }
   };
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="w-full max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6">
       <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/20 shadow-xl flex flex-col gap-5">
         <div className="flex items-center gap-3 border-b border-amber-500/10 pb-4"><Sparkles className="w-6 h-6 text-amber-400 animate-pulse" /><div><h2 className="text-lg font-bold font-serif text-amber-400">Oráculo de Decodificación Integral</h2><p className="text-xs text-amber-100/60">Evoca la Gnosis. Analiza cualquier término esotérico, concepto o símbolo.</p></div></div>
         <div className="flex flex-wrap gap-1.5">
@@ -621,7 +621,7 @@ function CinemaView() {
     try { const data = await safeFetchJSON("/api/analyze-movie", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ movie: movieName }) }, "Las musas del teatro oscurecieron los carretes."); setResult(data); synthInstance.playChime(392, 1.5, "triangle"); } catch (err: any) { setErrorStr(err.message); } finally { setLoading(false); }
   };
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6">
       <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/20 shadow-xl flex flex-col gap-5">
         <div className="flex items-center gap-3 border-b border-amber-500/10 pb-4"><Film className="w-6 h-6 text-amber-400 animate-pulse" /><div><h2 className="text-lg font-bold font-serif text-amber-400">Cine Gnóstico e Iniciático</h2><p className="text-xs text-amber-100/60">Analiza películas bajo la óptica de la Cábala, Gnosticismo y Alquimia.</p></div></div>
         <div className="flex flex-wrap gap-1.5">{["The Matrix", "El Show de Truman", "Interstellar", "Inception", "El Laberinto del Fauno"].map(f => (<button key={f} onClick={() => setMovieName(f)} className="px-2.5 py-1 rounded bg-zinc-950 hover:bg-zinc-900 text-[10px] text-amber-200/70 border border-amber-500/10 transition-all">🎥 {f}</button>))}</div>
@@ -651,7 +651,7 @@ function BooksView() {
     try { const data = await safeFetchJSON("/api/analyze-book", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ book: bookName }) }, "Las musas oscurecieron los pergaminos."); setResult(data); synthInstance.playChime(392, 1.5, "triangle"); } catch (err: any) { setErrorStr(err.message); } finally { setLoading(false); }
   };
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6">
       <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/20 shadow-xl flex flex-col gap-5">
         <div className="flex items-center gap-3 border-b border-amber-500/10 pb-4"><BookOpen className="w-6 h-6 text-amber-400 animate-pulse" /><div><h2 className="text-lg font-bold font-serif text-amber-400">Libros e Iniciación Literaria</h2><p className="text-xs text-amber-100/60">Analiza textos sagrados bajo la óptica del Gnosticismo y Alta Magia.</p></div></div>
         <div className="flex flex-wrap gap-1.5">{["El Kybalion", "El Zohar", "La Doctrina Secreta", "Dogma y Ritual de la Alta Magia", "Corpus Hermeticum"].map(f => (<button key={f} onClick={() => setBookName(f)} className="px-2.5 py-1 rounded bg-zinc-950 hover:bg-zinc-900 text-[10px] text-amber-200/70 border border-amber-500/10 transition-all">📜 {f}</button>))}</div>

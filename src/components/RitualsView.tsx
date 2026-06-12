@@ -172,7 +172,7 @@ export function RitualsView() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6"
+      className="w-full max-w-[calc(100%-6mm)] mx-auto flex flex-col gap-6"
     >
       <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/20 shadow-xl min-h-[500px]">
         
