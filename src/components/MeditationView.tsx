@@ -205,7 +205,7 @@ export function MeditationView() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="max-w-4xl mx-auto flex flex-col gap-6"
+      className="w-full flex flex-col gap-6"
     >
       <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 rounded-2xl border border-amber-500/20 shadow-xl">
         <div className="flex items-center gap-3 border-b border-amber-500/10 pb-4 mb-6">

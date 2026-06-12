@@ -5,6 +5,7 @@ export class CelestialSynth {
   private bowlIndex: number = 0;
   // A beautiful, meditative pentatonic scale (D3, E3, G3, A3, B3, D4) for harmonic variation
   private bowlScale: number[] = [146.83, 164.81, 196.00, 220.00, 246.94, 293.66];
+  private volumeMultiplier: number = 0.5; // Reduced volume by 50%
 
   private initCtx() {
     if (!this.ctx) {
@@ -61,7 +62,7 @@ export class CelestialSynth {
         
         // Super soft progressive attack (fade-in) to eliminate sudden clicks/jumps
         gainNode.gain.setValueAtTime(0.0001, now);
-        gainNode.gain.linearRampToValueAtTime(partial.gain, now + 0.45); // Smooth 450ms fade-in
+        gainNode.gain.linearRampToValueAtTime(partial.gain * this.volumeMultiplier, now + 0.45); // Smooth 450ms fade-in
         gainNode.gain.exponentialRampToValueAtTime(0.0001, now + partial.decay);
         
         osc.connect(gainNode);
@@ -86,7 +87,7 @@ export class CelestialSynth {
       const gainNode = this.ctx.createGain();
       osc.type = "sine";
       osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      gainNode.gain.setValueAtTime(0.02, this.ctx.currentTime);
+      gainNode.gain.setValueAtTime(0.02 * this.volumeMultiplier, this.ctx.currentTime);
       osc.connect(gainNode);
       gainNode.connect(this.ctx.destination);
       osc.start();
@@ -94,7 +95,7 @@ export class CelestialSynth {
         stop: () => { try { osc.stop(); } catch (e) {} },
         modulate: (ramp: number, duration: number) => {
           if (!this.ctx) return;
-          gainNode.gain.linearRampToValueAtTime(ramp, this.ctx.currentTime + duration);
+          gainNode.gain.linearRampToValueAtTime(ramp * this.volumeMultiplier, this.ctx.currentTime + duration);
         }
       };
     } catch (e) {
