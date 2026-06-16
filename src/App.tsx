@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   BookOpen, Film, Sparkles, Compass, Volume2, VolumeX,
   Pyramid, Hash, Star, Moon, Eye, Zap, ChevronLeft,
-  ChevronRight, Menu, X, BarChart3, Shield, Brain
+  ChevronRight, Menu, X, BarChart3, Shield, Brain, Settings
 } from "lucide-react";
 import { SYMBOLS_DATABASE, CATEGORIES, EsotericSymbol } from "./symbolsData";
 import { synthInstance } from "./utils/synth";
@@ -32,9 +32,11 @@ const ArchetypeView = React.lazy(() => import("./components/ArchetypeView").then
 const Pathworking22View = React.lazy(() => import("./components/Pathworking22View").then(m => ({ default: m.Pathworking22View })));
 const MapaGeneticoCompleto = React.lazy(() => import("./components/MapaGeneticoCompleto").then(m => ({ default: m.MapaGeneticoCompleto })));
 const JournalView = React.lazy(() => import("./components/JournalView").then(m => ({ default: m.JournalView })));
+const ConfiguracionView = React.lazy(() => import("./components/ConfiguracionView").then(m => ({ default: m.ConfiguracionView })));
 import ThemeToggle from "./components/ThemeToggle";
 import InstallPWA from "./components/InstallPWA";
 import { ShaderBackground } from "./components/ShaderBackground";
+import { applyAlchemicalPalette } from "./utils/theme";
 
 // Import existing views inline (they stay in App.tsx for now — refactor optional)
 import {
@@ -46,7 +48,7 @@ import {
 // ─── Navigation Configuration ─────────────────────────────────────────────
 type ViewId =
   | "library" | "oracle" | "cinema" | "books" | "pathworking"
-  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path" | "archetype" | "pathworking22" | "mapa_genetico" | "journal";
+  | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path" | "archetype" | "pathworking22" | "mapa_genetico" | "journal" | "configuracion";
 
 interface NavItem {
   id: ViewId;
@@ -193,6 +195,34 @@ function Sidebar({
         })}
       </nav>
 
+      {/* Botón de Configuración */}
+      <div className="px-2 py-2 border-t border-glass-border">
+        <button
+          onClick={() => handleNav("configuracion")}
+          title={collapsed && !isMobile ? "Configuración" : undefined}
+          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-all text-xs font-semibold relative border border-transparent ${
+            activeView === "configuracion"
+              ? "bg-alchemical-gold/10 border-alchemical-gold/30 text-alchemical-gold"
+              : "text-on-surface-variant/70 hover:text-on-surface hover:bg-obsidian-base/50"
+          } ${collapsed && !isMobile ? "justify-center" : ""}`}
+        >
+          <span className={`shrink-0 ${activeView === "configuracion" ? "text-alchemical-gold" : ""}`}>
+            {collapsed && !isMobile ? (
+              <span className="text-base">⚙️</span>
+            ) : (
+              <Settings className="w-4 h-4" />
+            )}
+          </span>
+          {(!collapsed || isMobile) && <span className="truncate">Configuración</span>}
+          {activeView === "configuracion" && (
+            <motion.div
+              layoutId="sidebar-active"
+              className="absolute left-0 top-1 bottom-1 w-0.5 bg-alchemical-gold rounded-full"
+            />
+          )}
+        </button>
+      </div>
+
       {/* Footer */}
       {(!collapsed || isMobile) && (
         <div className="p-3 border-t border-glass-border">
@@ -258,10 +288,23 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const savedPalette = localStorage.getItem("hermetic-palette");
+    if (savedPalette) {
+      applyAlchemicalPalette(savedPalette);
+    }
+  }, []);
+
+  useEffect(() => {
     synthInstance.setMute(isAudioMuted);
   }, [isAudioMuted]);
 
-  const currentNav = NAV_ITEMS.find(n => n.id === activeView);
+  const currentNav = NAV_ITEMS.find(n => n.id === activeView) || (activeView === "configuracion" ? {
+    id: "configuracion" as ViewId,
+    label: "Configuración Alquímica",
+    emoji: "⚙️",
+    category: "Ajustes",
+    icon: <Settings className="w-4 h-4" />
+  } : undefined);
 
   let bgImage = "";
   if (currentNav?.category === "📚 Estudio Hermético") bgImage = "/bg_estudio.png";
@@ -364,6 +407,7 @@ export default function App() {
               {activeView === "pathworking22" && <Pathworking22View key="pathworking22" />}
               {activeView === "mapa_genetico" && <MapaGeneticoCompleto key="mapa_genetico" />}
               {activeView === "journal" && <JournalView key="journal" />}
+              {activeView === "configuracion" && <ConfiguracionView key="configuracion" />}
             </AnimatePresence>
           </React.Suspense>
         </main>
