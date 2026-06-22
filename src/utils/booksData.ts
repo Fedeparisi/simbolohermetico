@@ -40,5 +40,29 @@ export const PDF_BOOKS_DATABASE: PDFBook[] = [
     description: "Una guía completa sobre el cultivo, el uso culinario y las propiedades medicinales e históricas de las plantas.",
     category: "Herbolaria",
     pdfUrl: "/books/la_biblia_de_las_hierbas.pdf"
+  },
+  {
+    id: "clavicula_salomon",
+    title: "La Clavícula de Salomón",
+    author: "Rey Salomón",
+    description: "Uno de los grimorios más famosos de la magia ceremonial y la evocación de espíritus.",
+    category: "Grimorios",
+    pdfUrl: "/books/clavicula_de_salomon.pdf"
+  },
+  {
+    id: "diario_magia_cordelia",
+    title: "365 Hechizos: Diario con Magia de Cordelia",
+    author: "Cordelia",
+    description: "Un compendio diario de rituales, hechizos y consejos prácticos para sintonizar con la magia.",
+    category: "Magia Práctica",
+    pdfUrl: "/books/diario_con_magia_cordelia.pdf"
+  },
+  {
+    id: "rituales_velas",
+    title: "Rituales Prácticos con Velas",
+    author: "Raymond Buckland",
+    description: "Una guía detallada para el uso mágico y espiritual de las velas en rituales de transformación.",
+    category: "Magia Práctica",
+    pdfUrl: "/books/rituales_practicos_con_velas.pdf"
   }
 ];
