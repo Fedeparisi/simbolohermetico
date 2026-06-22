@@ -39,6 +39,6 @@ export const PDF_BOOKS_DATABASE: PDFBook[] = [
     author: "Sarah Garland",
     description: "Una guía completa sobre el cultivo, el uso culinario y las propiedades medicinales e históricas de las plantas.",
     category: "Herbolaria",
-    pdfUrl: "/books/La Biblia de las hierbas.pdf"
+    pdfUrl: "/books/la_biblia_de_las_hierbas.pdf"
   }
 ];

@@ -12,6 +12,7 @@ coverage/
 
 # Large binaries and temp files
 *.pdf
+!public/books/*.pdf
 *.docx
 ~$*
 spa.traineddata
