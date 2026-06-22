@@ -33,6 +33,7 @@ const Pathworking22View = React.lazy(() => import("./components/Pathworking22Vie
 const MapaGeneticoCompleto = React.lazy(() => import("./components/MapaGeneticoCompleto").then(m => ({ default: m.MapaGeneticoCompleto })));
 const JournalView = React.lazy(() => import("./components/JournalView").then(m => ({ default: m.JournalView })));
 const ConfiguracionView = React.lazy(() => import("./components/ConfiguracionView").then(m => ({ default: m.ConfiguracionView })));
+const PDFBooksView = React.lazy(() => import("./components/PDFBooksView").then(m => ({ default: m.PDFBooksView })));
 import ThemeToggle from "./components/ThemeToggle";
 import InstallPWA from "./components/InstallPWA";
 import { ShaderBackground } from "./components/ShaderBackground";
@@ -47,7 +48,7 @@ import {
 
 // ─── Navigation Configuration ─────────────────────────────────────────────
 type ViewId =
-  | "library" | "oracle" | "cinema" | "books" | "pathworking"
+  | "library" | "oracle" | "cinema" | "books" | "pdf_books" | "pathworking"
   | "gematria" | "sigil" | "tarot" | "lunar" | "dreams" | "correspondences" | "astrology" | "meditations" | "kundalini" | "rituals" | "visualization" | "magic_path" | "archetype" | "pathworking22" | "mapa_genetico" | "journal" | "configuracion";
 
 interface NavItem {
@@ -65,6 +66,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "oracle", label: "Oráculo IA", icon: <Sparkles className="w-4 h-4" />, category: "📚 Estudio Hermético", emoji: "🔮" },
   { id: "cinema", label: "Cine Gnóstico", icon: <Film className="w-4 h-4" />, category: "📚 Estudio Hermético", emoji: "🎬" },
   { id: "books", label: "Libros Iniciáticos", icon: <BookOpen className="w-4 h-4" />, category: "📚 Estudio Hermético", emoji: "📖" },
+  { id: "pdf_books", label: "Biblioteca PDF", icon: <BookMarked className="w-4 h-4" />, category: "📚 Estudio Hermético", emoji: "📥", isNew: true },
   // Herramientas Mágicas
   { id: "gematria", label: "Gematría", icon: <Hash className="w-4 h-4" />, category: "⚗️ Herramientas Mágicas", emoji: "✡️", isNew: true },
   { id: "sigil", label: "Sigilos", icon: <Star className="w-4 h-4" />, category: "⚗️ Herramientas Mágicas", emoji: "★", isNew: true },
@@ -390,6 +392,7 @@ export default function App() {
               {activeView === "oracle" && <OracleView key="oracle" />}
               {activeView === "cinema" && <CinemaView key="cinema" />}
               {activeView === "books" && <BooksView key="books" />}
+              {activeView === "pdf_books" && <PDFBooksView key="pdf_books" />}
               {activeView === "pathworking" && <PathworkingView key="pathworking" />}
               {activeView === "gematria" && <GematriaView key="gematria" />}
               {activeView === "sigil" && <SigilView key="sigil" />}
