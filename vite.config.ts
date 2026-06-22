@@ -14,6 +14,7 @@ export default defineConfig(() => {
         includeAssets: ['icon.svg'],
         workbox: {
           maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // 15 MB
+          navigateFallbackDenylist: [/^\/api\//, /^\/books\//],
         },
         manifest: {
           name: 'Decodificador Hermético',
