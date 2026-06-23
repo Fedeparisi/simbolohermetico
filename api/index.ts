@@ -2,10 +2,21 @@ import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 import OpenAI from "openai";
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 30, // Límite de 30 peticiones por IP cada 15 minutos
+  message: { error: "Las fuerzas cósmicas necesitan descansar. Has excedido el límite de consultas (30 cada 15 minutos). Por favor, intenta de nuevo más tarde." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
 app.use(express.json());
 
 // Lazy initialize DeepSeek client via OpenAI SDK
